@@ -1,0 +1,142 @@
+<%- include("./partials/header") %>
+
+<script>swingWebViewPlugin.app.login.doAppLogin("<%= user.email.substring(0, user.email.indexOf('@')) %>","<%= user.name.replace(/\d+/g, '') %>"); </script>
+
+<div id="page">
+    <div id="footer-bar" class="footer-bar-1">
+        <a href="/board"><i class="fa fa-window-restore"></i><span>소식지</span></a>
+        <a href="/main"><i class="fa fa-home"></i><span>홈</span></a>
+        <a href="/point" class="active-nav"><i class="fa fa-star"></i><span>구고포인트</span></a>
+        <a href="" data-menu="menu-sidebar-right-1"><i class="fa fa-list-ul"></i><span>마이페이지</span></a>
+    </div>
+
+
+    <div class="page-content">
+        
+        <div class="content notch-clear">
+            <div class="d-flex pt-2">
+                <div class="align-self-center me-auto">
+                    <h1 class="font-24 pt-2 ps-2">구고포인트 지갑</h1>
+                </div>
+                <div class="align-self-center ms-auto">
+                    <a href="#" class="d-block" data-menu="menu-sidebar-right-1"><img src="<%= user.picture %>" class="img-fluid shadow-xl rounded-circle" width="45"></a>
+                </div>
+            </div>
+        </div>
+
+        <div data-card-height="200" class="card card-style rounded-m shadow-xl preload-img" data-src="/index/img/guri1.jpg">
+            <div class="card-top mt-4 ms-3">
+                <h1 class="color-white mb-0 mb-n2 font-22">구고포인트</h1>
+                <p class="bottom-0 color-white opacity-50 under-heading font-11 font-500 ps-1"><%= user.name.replace(/[^\d]/g, '') %> <%= user.name.replace(/\d+/g, '') %></p>
+            </div>
+            <div class="card-top mt-4 me-3">
+                <a onclick="location.reload(); return false;" class="mt-1 float-end text-uppercase font-600 font-11 btn btn-s rounded-s shadow-l bg-highlight">새로고침</a>
+            </div>
+            <div class="card-center text-center">
+                <h1 class="color-white pt-5 font-40"><%= point %> P</h1>
+            </div>
+            <div class="card-overlay bg-black opacity-70"></div>
+        </div>
+
+        <div class="content mb-0">
+            <div class="row mb-0">
+                <div class="col-6 pe-1">
+                    <a href="#"  class="card-style d-block bg-theme py-3 mx-0" data-menu="sheet-wizard-step-1">
+                        <span href="#" class="color-theme font-600 font-13 text-uppercase px-3"><i class="fa fa-arrow-up color-green-dark pt-2 pe-2 float-end"></i>매점에서 사용</span>
+                    </a>
+                </div>
+                <div class="col-6 ps-1">
+                    <a href="#"  class="card-style d-block bg-theme py-3 mx-0">
+                        <span href="#" class="color-theme font-600 font-13 text-uppercase px-3"><i class="fa fa-arrow-up color-green-dark pt-2 pe-2 float-end"></i>학생회 상점에서 사용</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-style">
+            <div class="content">
+                <h4>구고포인트는 아직 테스트 단계입니다.</h4>
+                <p>
+                    구고포인트 제도는 아직 테스트 단계이며, 내부회의가 필요한 상태입니다. 관련 사항이 확정되는대로 소식지를 통해 안내하겠습니다. 감사합니다.
+                </p>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="sheet-wizard-step-1" class="menu menu-box-bottom menu-box-detached rounded-m">
+        <div class="content">
+            <h2>관리자 비밀번호 입력</h2>
+            <p>
+                결제 인증을 위해 매점 관리자의 비밀번호를 입력하세요. 비밀번호가 잘못 입력될 경우 결제가 진행되지 않습니다.
+            </p>
+            <h5>관리자 비밀번호</h5>
+            <div class="input-style has-borders no-icon">
+                <label for="admin-password" class="color-highlight disabled"></label>
+                <input type="number" class="form-control validate-number" id="admin-password" placeholder="XXXX">
+                <i class="fa fa-check disabled valid color-green-dark"></i>
+                <i class="fa fa-check disabled invalid color-red-dark"></i>
+                <em></em>
+            </div>
+            <a href="#" id="next-step-1" data-menu="sheet-wizard-step-2" class="btn btn-full btn-m rounded-m bg-blue-dark font-700 text-uppercase mt-4 mb-4">다음단계</a>
+        </div>
+    </div>
+    
+    <div id="sheet-wizard-step-2" class="menu menu-box-bottom menu-box-detached rounded-m" style="display:none;">
+        <div class="content">
+            <h2>결제할 금액 입력</h2>
+            <p>
+                결제되어 차감될 포인트를 양의 정수로 입력하세요. 
+            </p>
+            <h5>차감될 포인트</h5>
+            <div class="input-style has-borders no-icon">
+                <label for="points" class="color-highlight disabled"></label>
+                <input type="number" class="form-control validate-number" id="points" placeholder="1000">
+                <i class="fa fa-check disabled valid color-green-dark"></i>
+                <i class="fa fa-check disabled invalid color-red-dark"></i>
+                <em></em>
+            </div>
+            <a href="#" id="submit-payment" data-menu="sheet-wizard-step-3" class="btn btn-full btn-m rounded-m bg-blue-dark font-700 text-uppercase mt-4 mb-4">제출</a>
+        </div>
+    </div>
+
+    <div id="snackbar-2" class="snackbar-toast rounded-m bg-blue-dark" data-bs-delay="1500" data-bs-autohide="true"><i class="fa fa-check me-3"></i>결제가 정상적으로 완료되었습니다.</div>
+    <div id="snackbar-5" class="snackbar-toast rounded-m bg-red-dark" data-bs-delay="1500" data-bs-autohide="true"><i class="fa fa-times me-3"></i>결제에 실패했습니다.</div>
+
+    <script>
+        document.getElementById('next-step-1').addEventListener('click', function(event) {
+            event.preventDefault();
+            document.getElementById('sheet-wizard-step-1').classList.remove('menu-active');
+            document.getElementById('sheet-wizard-step-2').classList.add('menu-active');
+        });
+
+        document.getElementById('submit-payment').addEventListener('click', function(event) {
+            event.preventDefault(); // 기본 동작 막기
+
+            // 입력된 값 가져오기
+            const adminPassword = document.getElementById('admin-password').value;
+            const points = document.getElementById('points').value;
+
+            var xhr = new XMLHttpRequest();
+            xhr.open("POST", "https://gurihs.kr/point/hsm", true);
+            xhr.setRequestHeader("Content-Type", "application/json");
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                    var myToast = new bootstrap.Toast(document.getElementById('snackbar-2'));
+                    myToast.show();
+                    setTimeout(function() {
+                        location.reload();
+                    }, 1500);
+                }
+                
+                if (xhr.status === 400) {
+                    var myToast = new bootstrap.Toast(document.getElementById('snackbar-5'));
+                    myToast.show();
+                }
+            };
+            xhr.send(JSON.stringify({adminPassword: adminPassword, points: points}));
+            return false;
+        });
+    </script>
+
+    <%- include("./partials/footer", { user }) %>

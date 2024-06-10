@@ -1,0 +1,123 @@
+    <!-- End of Page Content-->
+
+    <!-- Sidebar 1 -->
+        <div id="menu-sidebar-right-1" class="menu menu-box-right menu-box-detached menu-sidebar" data-menu-width="310">
+            <div class="sidebar-content">
+                <div class="bg-theme mx-3 rounded-m shadow-m my-3">
+                    <div class="d-flex px-2 pb-2 pt-2">
+                        <div class="align-self-center">
+                            <a href="#"><img src="<%= user.picture %>" width="40" class="rounded-sm" alt="img"></a>
+                        </div>
+                        <div class="ps-2 align-self-center">
+                            <h5 class="ps-1 mb-1 pt-1 line-height-xs font-17"><%= user.name.replace(/\d+/g, '') %></h5>
+                            <h6 class="ps-1 mb-0 font-400 opacity-40 font-12"><%= user.email %></h6>
+                        </div>
+                        <div class="ms-auto">
+                            <a href="#" data-bs-toggle="dropdown" class="icon icon-m ps-3"><i class="fa fa-ellipsis-v font-18 color-theme"></i></a>
+                            <div class="dropdown-menu bg-transparent border-0 mb-n5">
+                                <div class="card card-style rounded-m shadow-xl me-1">
+                                    <div class="list-group list-custom-small list-icon-0 px-3 mt-n1">
+                                        <a href="/auth/logout" class="mb-n1">
+                                            <span>로그아웃</span>
+                                            <i class="fa fa-angle-right"></i>
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card card-style">
+                    <div class="content my-0">
+                        <h5 class="font-700 text-uppercase opacity-40 font-12 pt-2 mb-0">설정</h5>
+                        <div class="list-group list-custom-small list-icon-0">
+                            <a href="#" onclick="swingWebViewPlugin.app.screen.setting.show();">
+                                <i class="fa font-12 fa-cog gradient-blue rounded-sm color-white"></i>
+                                <span>앱설정</span>
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card card-style">
+                    <div class="content my-0">
+                        <h5 class="font-700 text-uppercase opacity-40 font-12 pt-2 mb-0">연락하기</h5>
+                        <div class="list-group list-custom-small list-icon-0">
+                            <a href="#">
+                                <i class="fa font-12 fa-edit gradient-blue rounded-sm color-white"></i>
+                                <span>학생회 문의실</span>
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                            <a href="https://www.instagram.com/darkcircle_hanseung/">
+                                <i class="fa font-12 fa-code gradient-blue rounded-sm color-white"></i>
+                                <span>개발자 연락처</span>
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            
+            <div class="position-sticky w-100 bottom-0 end-0 pb-1">
+                <div class="card card-style mb-3">
+                    <div class="content my-0 py-">
+                        <div class="list-group list-custom-small list-icon-0">
+                            <a href="#" data-toggle-theme data-trigger-switch="switch-dark2-mode" class="border-0">
+                                <i class="fa font-12 fa-moon gradient-blue color-white rounded-sm"></i>
+                                <span>다크모드</span>
+                                <div class="custom-control ios-switch">
+                                    <input data-toggle-theme type="checkbox" class="ios-input" id="switch-dark2-mode">
+                                    <label class="custom-control-label" for="switch-dark2-mode"></label>
+                                </div>
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <!-- Menu Share -->
+        <div id="menu-share" class="menu menu-box-bottom menu-box-detached">
+            <div class="menu-title mt-n1"><h1>Share the Love</h1><p class="color-highlight">Just Tap the Social Icon. We'll add the Link</p><a href="#" class="close-menu"><i class="fa fa-times"></i></a></div>
+            <div class="content mb-0">
+                <div class="divider mb-0"></div>
+                <div class="list-group list-custom-small list-icon-0">
+                    <a href="auto_generated" class="shareToFacebook external-link">
+                        <i class="font-18 fab fa-facebook-square color-facebook"></i>
+                        <span class="font-13">Facebook</span>
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                    <a href="auto_generated" class="shareToTwitter external-link">
+                        <i class="font-18 fab fa-twitter-square color-twitter"></i>
+                        <span class="font-13">Twitter</span>
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                    <a href="auto_generated" class="shareToLinkedIn external-link">
+                        <i class="font-18 fab fa-linkedin color-linkedin"></i>
+                        <span class="font-13">LinkedIn</span>
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                    <a href="auto_generated" class="shareToWhatsApp external-link">
+                        <i class="font-18 fab fa-whatsapp-square color-whatsapp"></i>
+                        <span class="font-13">WhatsApp</span>
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                    <a href="auto_generated" class="shareToMail external-link border-0">
+                        <i class="font-18 fa fa-envelope-square color-mail"></i>
+                        <span class="font-13">Email</span>
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    
+    </div>
+    
+    <script type="text/javascript" src="/app/scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/app/scripts/custom.js"></script>
+    </body>
+    

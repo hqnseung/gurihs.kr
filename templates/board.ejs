@@ -1,0 +1,134 @@
+<%- include("./partials/header") %>
+
+<script>swingWebViewPlugin.app.login.doAppLogin("<%= user.email.substring(0, user.email.indexOf('@')) %>","<%= user.name.replace(/\d+/g, '') %>"); </script>
+
+<div id="page">
+    <div id="footer-bar" class="footer-bar-1">
+        <a href="/board" class="active-nav"><i class="fa fa-window-restore"></i><span>소식지</span></a>
+        <a href="/main"><i class="fa fa-home"></i><span>홈</span></a>
+        <a href="/point"><i class="fa fa-star"></i><span>구고포인트</span></a>
+        <a href="" data-menu="menu-sidebar-right-1"><i class="fa fa-list-ul"></i><span>마이페이지</span></a>
+    </div>
+
+
+    <div class="page-content">
+        
+        <div class="content notch-clear">
+            <div class="d-flex pt-2">
+                <div class="align-self-center me-auto">
+                    <h1 class="font-24 pt-2 ps-2">학생회 소식지</h1>
+                </div>
+                <div class="align-self-center ms-auto">
+                    <a href="#" class="d-block" data-menu="menu-sidebar-right-1"><img src="<%= user.picture %>" class="img-fluid shadow-xl rounded-circle" width="45"></a>
+                </div>
+            </div>
+        </div>
+
+        <div class="content mt-n1 mb-4">
+            <div class="search-box bg-theme color-theme rounded-m shadow-l">
+                <i class="fa fa-search"></i>
+                <input type="text" class="border-0" placeholder="게시물 검색" data-search>
+				<a href="#" class="clear-search disabled mt-0"><i class="fa fa-times color-red-dark"></i></a>
+            </div>   
+            <div class="search-results disabled-search-list mt-3">
+                <div class="card card-style mx-0 px-2 p-0 mb-0">
+                    <a href="#" class="d-flex py-2" data-filter-item data-filter-name="학생회 임원 모집">
+                        <div>
+                            <img src="/app/images/pictures/28s.jpg" class="rounded-sm me-3" width="70">
+                        </div>
+                        <div>
+                            <span class="color-highlight font-300 d-block pt-0 text-uppercase font-10">2024년 6월 2일</span>
+                            <strong class="color-theme font-15 d-block mt-n2">38대 학생자치회 임원을 모집합니다.</strong>
+                            <span class="font-11 d-block mb-n1 color-theme opacity-30">전교회장 이호용 작성</span>
+                        </div>
+                    </a>
+                    <a href="#" class="d-flex py-2" data-filter-item data-filter-name="학생회 어플 소개">
+                        <div>
+                            <img src="/app/images/pictures/21s.jpg" class="rounded-sm me-3" width="70">
+                        </div>
+                        <div>
+                            <span class="color-highlight font-300 d-block pt-0 text-uppercase font-10">2024년 6월 2일</span>
+                            <strong class="color-theme font-15 d-block mt-n2">구리고 학생회 어플을 소개합니다.</strong>
+                            <span class="font-11 d-block mb-n1 color-theme opacity-30">기술부장 한승우 작성</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>	
+        <div class="search-no-results disabled mt-4">
+            <div class="card card-style">
+                <div class="content">
+                    <h2>검색결과를 찾을수 없습니다.</h2>
+                    <p>
+                        키워드를 정확하고 완전하게 작성해주세요.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+
+        <h6 class="text-uppercase font-700 ps-4 pb-1 font-14">예정된 이벤트</h6>
+        <div class="splide single-slider slider-no-arrows visible-slider slider-no-dots" id="single-slider-2">
+            <div class="splide__track"> 
+                <div class="splide__list">
+                    <div class="splide__slide px-3">     
+                        <div class="card card-style p-3 mx-0">
+                            <a href="#" class="d-flex">
+                                <div>
+                                    <img src="/app/images/pictures/18s.jpg" class="rounded-sm me-3" width="70">
+                                </div>
+                                <div>
+                                    <span class="color-highlight font-300 d-block pt-0 text-uppercase font-10">날짜 미정</span>
+                                    <strong class="color-theme font-16 d-block mt-n2">구고컵</strong>
+                                    <span class="font-11 d-block mb-n1 color-theme opacity-30"><i class="fa fa-map-marker pe-2"></i>구리고등학교 운동장</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="splide__slide px-3">
+                        <div class="card card-style p-3 mx-0">
+                            <a href="#" class="d-flex">
+                                <div>
+                                    <img src="/app/images/pictures/22s.jpg" class="rounded-sm me-3" width="70">
+                                </div>
+                                <div>
+                                    <span class="color-highlight font-300 d-block pt-0 text-uppercase font-10">날짜 미정</span>
+                                    <strong class="color-theme font-16 d-block mt-n2">E 스포츠 대회</strong>
+                                    <span class="font-11 d-block mb-n1 color-theme opacity-30"><i class="fa fa-map-marker pe-2"></i>구리고등학교 구상터</span>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content mt-n2 mb-4 ps-1">
+            <a href="#">
+                <div class="d-flex mb-3">
+                    <div class="align-self-center me-auto">
+                        <img src="/app/images/pictures/28s.jpg" class="rounded-m me-3" width="90">
+                    </div>
+                    <div class="align-self-center w-100">
+                        <h5 class="font-15 pt-2">저희와 함께하실 성실한<br>38대 학생자치회 임원을 모집합니다.</h5>
+                        <span class="color-theme font-11 opacity-50">2024년 6월 2일 / 이호용 작성</span>
+                    </div>
+                </div>
+            </a>
+            <div class="divider mb-3"></div>
+            <a href="#">
+                <div class="d-flex mb-3">
+                    <div class="align-self-center me-auto">
+                        <img src="/app/images/pictures/21s.jpg" class="rounded-m me-3" width="90">
+                    </div>
+                    <div class="align-self-center w-100">
+                        <h5 class="font-15 pt-2">이런건 처음보죠?<br>구리고 학생회 어플을 소개합니다.</h5>
+                        <span class="color-theme font-11 opacity-50">2024년 6월 2일 / 한승우 작성</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+
+    </div>
+
+    <%- include("./partials/footer", { user }) %>

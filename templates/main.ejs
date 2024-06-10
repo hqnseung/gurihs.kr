@@ -1,0 +1,73 @@
+<%- include("./partials/header") %>
+
+<script>swingWebViewPlugin.app.login.doAppLogin("<%= user.email.substring(0, user.email.indexOf('@')) %>","<%= user.name.replace(/\d+/g, '') %>"); </script>
+
+<div id="page">
+    <div id="footer-bar" class="footer-bar-1">
+        <a href="/board"><i class="fa fa-window-restore"></i><span>소식지</span></a>
+        <a href="/main" class="active-nav"><i class="fa fa-home"></i><span>홈</span></a>
+        <a href="/point"><i class="fa fa-star"></i><span>구고포인트</span></a>
+        <a href="" data-menu="menu-sidebar-right-1"><i class="fa fa-list-ul"></i><span>마이페이지</span></a>
+    </div>
+
+    <div class="page-content">
+
+        <div class="content notch-clear">
+            <div class="d-flex pt-2">
+                <div class="align-self-center me-auto">
+                    <strong class="opacity-60 font-12 ps-2  "><%= user.email %></strong>
+                    <h1 class="mt-n2 font-24 ps-2"><%= user.name.replace(/\d+/g, '') %>님 환영합니다</h1>
+                </div>
+                <div class="align-self-center ms-auto">
+                    <a href="#" class="d-block" data-menu="menu-sidebar-right-1"><img src="<%= user.picture %>" class="img-fluid shadow-xl rounded-circle" width="45"></a>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="splide single-slider visible-slider slider-no-arrows slider-no-dots" id="single-slider-1">
+            <div class="splide__track">
+                <div class="splide__list">
+                    <div class="splide__slide">
+                        <a href="/board?id=0001" class="card me-0 card-style" data-card-height="300" style="background-image: url('/app/images/목업.png')">
+                            <div class="card-top">
+                                <span class="badge float-end bg-blue-dark p-2 text-uppercase rounded-s m-2">공지사항</span>
+                            </div>
+                            <div class="card-bottom m-3">
+                                <h1 class="color-white font-20 font-600">
+                                    환영합니다!<br>
+                                    학생회 어플을 소개합니다. 
+                                </h1>
+                                <p class="mb-0 color-white font-12 opacity-40 pt-1 font-600">2024년 6월 2일 / 한승우 작성</p>
+                            </div>
+                            <div class="card-overlay bg-gradient opacity-90"></div>
+                        </a>
+                    </div>
+                    <div class="splide__slide">
+                        <a href="#" class="card me-0 card-style" data-card-height="300" style="background-image: url('/app/images/목업2.png')">
+                            <div class="card-top">
+                                <span class="badge float-end bg-blue-dark p-2 text-uppercase rounded-s m-2">공지사항</span>
+                            </div>
+                            <div class="card-bottom m-3">
+                                <h1 class="color-white font-20 font-600">
+                                    38대 학생자치회<br>임원을 모집합니다.
+                                </h1>
+                                <p class="mb-0 color-white font-12 opacity-40 pt-1 font-600">2024년 6월 2일 / 이호용 작성</p>
+                            </div>
+                            <div class="card-overlay bg-gradient opacity-90"></div>
+                        </a>
+                    </div>  
+                </div>
+            </div>
+        </div>
+
+        <div class="card card-style">
+            <div class="content">
+                <h4>오늘의 구리고 급식</h4>
+                <a><%- lunch %></a>
+            </div>
+        </div>
+
+    </div>
+
+    <%- include("./partials/footer", { user }) %>

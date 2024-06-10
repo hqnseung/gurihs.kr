@@ -1,0 +1,39 @@
+<%- include("./partials/header") %>
+
+<script>
+    swingWebViewPlugin.app.login.doAppLogout();
+    swingWebViewPlugin.app.webview.clearCache()
+</script>
+
+
+<div id="page">
+    <div class="page-content pb-0">
+
+        <div data-card-height="cover" class="card">
+            <div class="card-center">
+                
+                <h1 class="text-center font-800 font-40 mb-1">로그인</h1>
+                <p class="color-blue-light text-center">구고인임을 증명하기</p>
+
+                <div class="ps-4 pe-4">
+                    <div class="card card-style">
+                        <div class="content">
+                            <h4>학교 구글계정을 사용하세요.</h4>
+                            <p>
+                                이 어플은 학교 구글계정을 통해 로그인을 해야지 로그인이 완료됩니다. guri.hs.kr 이메일을 사용하는 구리고등학교 학교계정으로 로그인하세요.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="ps-5 pe-5">
+                    <a href="/auth/google" class="btn btn-full btn-m shadow-large rounded-sm font-700 bg-blue-light">구글 로그인</a>
+                </div>
+                <br><br><br><br>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript" src="/app/scripts/bootstrap.min.js"></script>
+<script type="text/javascript" src="/app/scripts/custom.js"></script>
+</body>
