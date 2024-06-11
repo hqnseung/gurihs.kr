@@ -19,11 +19,6 @@ const templateDir = path.resolve(`${dataDir}${path.sep}templates`);
 
 mongoose.connect(DATABASE_URL).then(() => console.log('Connected to DB'));
 
-const options = {
-  key: fs.readFileSync("./config/private.key"),
-  cert: fs.readFileSync("./config/certificate.crt"),
-};
-
 app.engine("html", ejs.renderFile);
 app.set("view engine", "html");
 
@@ -126,7 +121,7 @@ app.get('/login', (req, res) => {
 
 app.get('/main', (req, res) => {
   const user = req.user;
-  if (user === undefined) res.redirect('/login');
+  if (user === undefined) return res.redirect('/login')
 
   const currentDate = new Date();
   const year = currentDate.getFullYear();
@@ -154,7 +149,7 @@ app.get('/main', (req, res) => {
 app.get('/point', async (req, res) => {
   const user = req.user;
 
-  if (user === undefined) res.redirect('/login')
+  if (user === undefined) return res.redirect('/login')
 
   const userEmail = user.email
   const userId = userEmail.substring(0, userEmail.indexOf('@'))
@@ -167,7 +162,7 @@ app.get('/point', async (req, res) => {
 app.post('/point/hsm', async (req, res) => {
   const user = req.user;
 
-  if (user === undefined) errRetrun
+  if (user === undefined) return errRetrun
 
   const userEmail = user.email
   const userId = userEmail.substring(0, userEmail.indexOf('@'))
@@ -177,14 +172,13 @@ app.post('/point/hsm', async (req, res) => {
 
   function errRetrun () {
     res.status(400).json({ message: 'Error occurred while processing data' });
-    return 
   }
 
   if (data.adminPassword !== "1245") errRetrun // TODO: 비밀번호 db 연동할것
-  if (points < 0) errRetrun
+  if (points < 0) return errRetrun
 
   const userdb = (await User.find({ id: userId }))[0]
-  if ((userdb.point - points) < 0) errRetrun
+  if ((userdb.point - points) < 0) return errRetrun
 
   userdb.point = userdb.point-points
 
@@ -194,7 +188,7 @@ app.post('/point/hsm', async (req, res) => {
 
 app.get('/board', (req, res) => {
   const user = req.user;
-  if (user === undefined) res.redirect('/login')
+  if (user === undefined) return res.redirect('/login')
 
   if (req.query.id) {
     renderTemplate(res, req, "view.ejs", { id: req.query.id, user }) // TODO: db 연동 추가할것
@@ -204,7 +198,7 @@ app.get('/board', (req, res) => {
 });
 
 
-app.get('/auth/logout',(req,res,next)=>{
+app.get('/auth/logout', (req, res, next)=>{
   const user = req.user;
   req.logOut(err => {
       if (err) {
@@ -223,10 +217,15 @@ app.use((err,req,res,next)=>{
 
 app.use((req, res, next)=> res.status(404).render(path.resolve(`${templateDir}${path.sep}404.ejs`)))
 
+
 if (startType === "https") {
+  const options = {
+    key: fs.readFileSync("./config/private.key"),
+    cert: fs.readFileSync("./config/certificate.crt"),
+  }
   https.createServer(options, app).listen(443, () => {
     console.log(`HTTPS server started on port 443`);
-  });
+  })
 } else if (startType === "http") {
   app.listen("3000", () => {
     console.log(`HTTP server started on port 3000`)
