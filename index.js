@@ -12,7 +12,7 @@ const bodyParser = require('body-parser');
 const { default: axios } = require("axios");
 const mongoose = require('mongoose');
 const User = require("./models/User");
-const { DATABASE_URL, googleCredentials, sessionSecret } = require("./env");
+const { DATABASE_URL, googleCredentials, sessionSecret, startType } = require("./env");
 
 const dataDir = path.resolve(`${process.cwd()}${path.sep}`); 
 const templateDir = path.resolve(`${dataDir}${path.sep}templates`); 
@@ -26,6 +26,7 @@ const options = {
 
 app.engine("html", ejs.renderFile);
 app.set("view engine", "html");
+
 app.use(bodyParser.json());
 app.use("/", express.static(path.resolve(`${dataDir}${path.sep}assets`)));
 app.use(express.urlencoded({extended : true}));
@@ -125,93 +126,80 @@ app.get('/login', (req, res) => {
 
 app.get('/main', (req, res) => {
   const user = req.user;
-  if (user !== undefined) {
-    const currentDate = new Date();
-    const year = currentDate.getFullYear();
-    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
-    const day = String(currentDate.getDate()).padStart(2, '0');
-    const date = year + month + day;
-    const url = `https://open.neis.go.kr/hub/mealServiceDietInfo?Type=json&pIndex=1&pSize=100&ATPT_OFCDC_SC_CODE=J10&SD_SCHUL_CODE=7530054&KEY=6b2c5a8bd8284662bf5be43ffb875dc4&MLSV_YMD=${date}`;
+  if (user === undefined) res.redirect('/login');
 
-    axios.get(url)
-        .then(async response => {
-            let lunch = "";
-            if (response.data.RESULT && response.data.RESULT.CODE === "INFO-200") {
-                lunch = "오늘 급식정보가 존재하지 않습니다.";
-                
-            } else {
-                const data = response.data;
-                const ddishNm = data.mealServiceDietInfo[1].row[0].DDISH_NM;
-                lunch = ddishNm;
-            }
-            await renderTemplate(res, req, "main.ejs", { user, lunch });
-        })
-        .catch(error => {
-            console.error("Error fetching the lunch menu:", error);
-        });
-  } else {
-    res.redirect('/login');
-  }
+  const currentDate = new Date();
+  const year = currentDate.getFullYear();
+  const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+  const day = String(currentDate.getDate()).padStart(2, '0');
+  const date = year + month + day;
+  const url = `https://open.neis.go.kr/hub/mealServiceDietInfo?Type=json&pIndex=1&pSize=100&ATPT_OFCDC_SC_CODE=J10&SD_SCHUL_CODE=7530054&KEY=6b2c5a8bd8284662bf5be43ffb875dc4&MLSV_YMD=${date}`;
+
+  axios.get(url)
+      .then(async response => {
+          let lunch = "";
+          if (response.data.RESULT && response.data.RESULT.CODE === "INFO-200") {
+              lunch = "오늘 급식정보가 존재하지 않습니다.";
+          } else {
+              const data = response.data;
+              const ddishNm = data.mealServiceDietInfo[1].row[0].DDISH_NM;
+              lunch = ddishNm;
+          }
+          await renderTemplate(res, req, "main.ejs", { user, lunch });
+      }).catch(error => {
+          console.error("Error fetching the lunch menu:", error);
+      });
 });
 
 app.get('/point', async (req, res) => {
   const user = req.user;
-  if (user !== undefined) {
-    const email = user.email
-    const atIndex = email.indexOf('@');
-    const username = email.substring(0, atIndex);
-    const parsedData = (await User.find({ id: username }))[0]
 
-    renderTemplate(res, req, "point.ejs", { point: parsedData.point.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","), user });
-  } else {
-    res.redirect('/login');
-  }
+  if (user === undefined) res.redirect('/login')
+
+  const userEmail = user.email
+  const userId = userEmail.substring(0, userEmail.indexOf('@'))
+  const userdb = (await User.find({ id: userId }))[0]
+
+  renderTemplate(res, req, "point.ejs", { point: userdb.point.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","), user });
 });
 
+
 app.post('/point/hsm', async (req, res) => {
+  const user = req.user;
+
+  if (user === undefined) errRetrun
+
+  const userEmail = user.email
+  const userId = userEmail.substring(0, userEmail.indexOf('@'))
+
   const data = req.body;
   const points = parseFloat(data.points)
 
-  if (data.adminPassword !== "1245") {
+  function errRetrun () {
     res.status(400).json({ message: 'Error occurred while processing data' });
     return 
   }
 
-  if (req.user === undefined) {
-    res.status(400).json({ message: 'Error occurred while processing data' });
-    return 
-  }
+  if (data.adminPassword !== "1245") errRetrun // TODO: 비밀번호 db 연동할것
+  if (points < 0) errRetrun
 
-  if (points < 0) {
-    res.status(400).json({ message: 'Error occurred while processing data' });
-    return 
-  }
+  const userdb = (await User.find({ id: userId }))[0]
+  if ((userdb.point - points) < 0) errRetrun
 
-  const user = (await User.find({ id: req.user.email.substring(0, req.user.email.indexOf('@')) }))[0]
+  userdb.point = userdb.point-points
 
-  if ((user.point - points) < 0) {
-    res.status(400).json({ message: 'Error occurred while processing data' });
-    return 
-  }
-
-  user.point = user.point-points
-
-  await user.save().then(() => res.json({ message: 'Data received successfully' }))
-  
-  
+  await userdb.save().then(() => res.json({ message: 'Data received successfully' }))
 });
 
 
 app.get('/board', (req, res) => {
   const user = req.user;
-  if (user !== undefined) {
-    if (req.query.id) {
-      renderTemplate(res, req, "view.ejs", { id: req.query.id, user })
-    } else {
-      renderTemplate(res, req, "board.ejs", { user })
-    }
+  if (user === undefined) res.redirect('/login')
+
+  if (req.query.id) {
+    renderTemplate(res, req, "view.ejs", { id: req.query.id, user }) // TODO: db 연동 추가할것
   } else {
-    res.redirect('/login');
+    renderTemplate(res, req, "board.ejs", { user })
   }
 });
 
@@ -234,9 +222,14 @@ app.use((err,req,res,next)=>{
 });
 
 app.use((req, res, next)=> res.status(404).render(path.resolve(`${templateDir}${path.sep}404.ejs`)))
-app.use((req, res, next)=> res.status(500).render(path.resolve(`${templateDir}${path.sep}500.ejs`)))
 
+if (startType === "https") {
+  https.createServer(options, app).listen(443, () => {
+    console.log(`HTTPS server started on port 443`);
+  });
+} else if (startType === "http") {
+  app.listen("3000", () => {
+    console.log(`HTTP server started on port 3000`)
+  })
+}
 
-https.createServer(options, app).listen(443, () => {
-  console.log(`HTTPS server started on port 443`);
-});
