@@ -19,7 +19,7 @@
             </div>
             <div class="card-bottom p-3">
                 <h1 class="color-white pt-2">
-                    <%= id %>
+                    <%= postdb.title %>
                 </h1>
             </div>
             <div class="card-overlay bg-gradient"></div>
@@ -29,57 +29,11 @@
             <div class="content mt-2">
                 <div class="d-flex mb-2">
                     <div class="me-auto"><span class="opacity-90 font-10"><i class="far fa-clock pe-2"></i>2024년 6월 11일</span></div>
-                    <div class="mx-auto"><span class="opacity-90 font-10"><i class="far fa-comment pe-2"></i>이호용 작성</span></div>
-                    <div class="ms-auto"><span class="opacity-90 font-10"><i class="far fa-comment pe-2"></i>104 조회</span></div>
+                    <div class="mx-auto"><span class="opacity-90 font-10"><i class="far fa-comment pe-2"></i><%= postdb.author %> 작성</span></div>
+                    <div class="ms-auto"><span class="opacity-90 font-10"><i class="far fa-comment pe-2"></i><%= postdb.view %> 조회</span></div>
                 </div>
                 <div class="divider mb-3"></div>
-                <p>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-                    Curabitur aliquam non nunc quis maximus.
-                    Fusce volutpat arcu id ante maximus vestibulum.
-                    Curabitur non nisi venenatis, pharetra nisl et, ullamcorper diam.
-                    Morbi interdum varius molestie. Quisque feugiat augue id diam ornare auctor.
-                </p>
-                <div class="divider"></div>
-
-                <h4>This is an Image Gallery</h4>
-                <p>
-                    This page is not WordPress, it's an HTML website. Yes, that's right. but you can convert it to WordPress yourself or hire an expert from Envato Studio.
-                </p>
-                <div class="row">
-                    <div class="col-4">
-                        <a href="/app/images/pictures/21.jpg" class="default-link" data-gallery="gallery-1" title="Image Title or Caption">
-                            <img src="/app/images/empty.png" data-src="/app/images/pictures/21s.jpg" class="preload-img shadow-s img-fluid rounded-s" alt="img">
-                        </a>
-                    </div>
-                    <div class="col-4">
-                        <a href="/app/images/pictures/14.jpg" class="default-link" data-gallery="gallery-1" title="Image Title or Caption">
-                            <img src="/app/images/empty.png" data-src="/app/images/pictures/14s.jpg" class="preload-img shadow-s img-fluid rounded-s" alt="img">
-                        </a>
-                    </div>
-                    <div class="col-4">
-                        <a href="/app/images/pictures/18.jpg" class="default-link" data-gallery="gallery-1" title="Image Title or Caption">
-                            <img src="/app/images/empty.png" data-src="/app/images/pictures/18s.jpg" class="preload-img shadow-s img-fluid rounded-s" alt="img">
-                        </a>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-4">
-                        <a href="/app/images/pictures/21.jpg" class="default-link" data-gallery="gallery-1" title="Image Title or Caption">
-                            <img src="/app/images/empty.png" data-src="/app/images/pictures/21s.jpg" class="preload-img shadow-s img-fluid rounded-s" alt="img">
-                        </a>
-                    </div>
-                    <div class="col-4">
-                        <a href="/app/images/pictures/14.jpg" class="default-link" data-gallery="gallery-1" title="Image Title or Caption">
-                            <img src="/app/images/empty.png" data-src="/app/images/pictures/14s.jpg" class="preload-img shadow-s img-fluid rounded-s" alt="img">
-                        </a>
-                    </div>
-                    <div class="col-4">
-                        <a href="/app/images/pictures/18.jpg" class="default-link" data-gallery="gallery-1" title="Image Title or Caption">
-                            <img src="/app/images/empty.png" data-src="/app/images/pictures/18s.jpg" class="preload-img shadow-s img-fluid rounded-s" alt="img">
-                        </a>
-                    </div>
-                </div>
+                    <%- postdb.html %>
 
             </div>
         </div>

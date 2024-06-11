@@ -13,6 +13,7 @@ const { default: axios } = require("axios");
 const mongoose = require('mongoose');
 const User = require("./models/User");
 const { DATABASE_URL, googleCredentials, sessionSecret, startType } = require("./env");
+const Post = require("./models/Post");
 
 const dataDir = path.resolve(`${process.cwd()}${path.sep}`); 
 const templateDir = path.resolve(`${dataDir}${path.sep}templates`); 
@@ -68,7 +69,6 @@ const renderTemplate = (res, req, template, data = {}) => {
   res.render(path.resolve(`${templateDir}${path.sep}${template}`), Object.assign(data));
 };
 
-
 app.get('/auth/google', passport.authenticate('google', { scope: ['email','profile'] }));
 app.get('/auth/google/callback', 
   passport.authenticate('google', { failureRedirect: '/auth/login' }),
@@ -84,10 +84,11 @@ app.get('/auth/google/callback',
       res.redirect('/main');
       const atIndex = email.indexOf('@');
       const id = email.substring(0, atIndex);
+      const name = res.req.user.name.replace(/\d+/g, '')
 
       const dataToWrite = {
         id: id,
-        name: res.req.user.name.replace(/\d+/g, ''),
+        name: name,
         point: 0,
       }
 
@@ -106,9 +107,7 @@ app.get('/auth/google/callback',
   }
 );
 
-app.get('/', (req, res) => {
-    renderTemplate(res, req, "index.ejs");
-});
+app.get('/', (req, res) => renderTemplate(res, req, "index.ejs"));
 
 app.get('/login', (req, res) => {
   const user = req.user;
@@ -132,17 +131,17 @@ app.get('/main', (req, res) => {
 
   axios.get(url)
       .then(async response => {
-          let lunch = "";
-          if (response.data.RESULT && response.data.RESULT.CODE === "INFO-200") {
-              lunch = "오늘 급식정보가 존재하지 않습니다.";
-          } else {
-              const data = response.data;
-              const ddishNm = data.mealServiceDietInfo[1].row[0].DDISH_NM;
-              lunch = ddishNm;
-          }
-          await renderTemplate(res, req, "main.ejs", { user, lunch });
+        let lunch = "";
+        if (response.data.RESULT && response.data.RESULT.CODE === "INFO-200") {
+          lunch = "오늘 급식정보가 존재하지 않습니다.";
+        } else {
+          const data = response.data;
+          const ddishNm = data.mealServiceDietInfo[1].row[0].DDISH_NM;
+          lunch = ddishNm;
+        }
+        await renderTemplate(res, req, "main.ejs", { user, lunch });
       }).catch(error => {
-          console.error("Error fetching the lunch menu:", error);
+        console.error("Error fetching the lunch menu:", error);
       });
 });
 
@@ -170,11 +169,9 @@ app.post('/point/hsm', async (req, res) => {
   const data = req.body;
   const points = parseFloat(data.points)
 
-  function errRetrun () {
-    res.status(400).json({ message: 'Error occurred while processing data' });
-  }
+  const errRetrun = res.status(400).json({ message: 'Error occurred while processing data' });
 
-  if (data.adminPassword !== "1245") errRetrun // TODO: 비밀번호 db 연동할것
+  if (data.adminPassword !== "1245") return errRetrun // TODO: 비밀번호 db 연동할것
   if (points < 0) return errRetrun
 
   const userdb = (await User.find({ id: userId }))[0]
@@ -186,12 +183,13 @@ app.post('/point/hsm', async (req, res) => {
 });
 
 
-app.get('/board', (req, res) => {
+app.get('/board', async (req, res) => {
   const user = req.user;
   if (user === undefined) return res.redirect('/login')
 
   if (req.query.id) {
-    renderTemplate(res, req, "view.ejs", { id: req.query.id, user }) // TODO: db 연동 추가할것
+    const postdb = (await Post.find({ id: req.query.id }))[0]
+    renderTemplate(res, req, "view.ejs", { postdb, user }) // TODO: db 연동 추가할것
   } else {
     renderTemplate(res, req, "board.ejs", { user })
   }
@@ -201,22 +199,21 @@ app.get('/board', (req, res) => {
 app.get('/auth/logout', (req, res, next)=>{
   const user = req.user;
   req.logOut(err => {
-      if (err) {
-        return next(err);
-      } else {
-        res.redirect('/login');
-        console.log(`logout | ${user.name} / ${user.email}`)
-      }
-    });
+    if (err) {
+      return next(err);
+    } else {
+      res.redirect('/login');
+      console.log(`logout | ${user.name} / ${user.email}`)
+    }
+  });
 });
 
-app.use((err,req,res,next)=>{
+app.use((err, req, res, next)=>{
   if(err) console.log(err);
   res.send(err);
 });
 
 app.use((req, res, next)=> res.status(404).render(path.resolve(`${templateDir}${path.sep}404.ejs`)))
-
 
 if (startType === "https") {
   const options = {

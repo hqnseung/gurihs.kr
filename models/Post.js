@@ -2,6 +2,9 @@ const mongoose = require('mongoose');
 
 const PostSchema = new mongoose.Schema(
   {
+    id: {
+      type: String
+    },
     title: {
       type: String
     },
@@ -9,7 +12,8 @@ const PostSchema = new mongoose.Schema(
       type: String
     },
     view: {
-      type: Number
+      type: Number,
+      default: 0
     },
     html: {
       type: String
@@ -20,6 +24,6 @@ const PostSchema = new mongoose.Schema(
   }
 );
 
-const Post = mongoose.model('Post', BoardSchema);
+const Post = mongoose.model('Post', PostSchema);
 
 module.exports = Post;
