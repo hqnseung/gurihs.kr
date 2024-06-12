@@ -188,8 +188,8 @@ app.get('/board', async (req, res) => {
   if (user === undefined) return res.redirect('/login')
 
   if (req.query.id) {
-    const postdb = (await Post.find({ id: req.query.id }))[0]
-    renderTemplate(res, req, "view.ejs", { postdb, user }) // TODO: db 연동 추가할것
+    const post = (await Post.find({ id: req.query.id }))[0]
+    renderTemplate(res, req, "view.ejs", { post, user }) // TODO: db 연동 추가할것
   } else {
     renderTemplate(res, req, "board.ejs", { user })
   }
