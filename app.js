@@ -133,13 +133,13 @@ app.get('/main', (req, res) => {
       .then(async response => {
         let lunch = "";
         if (response.data.RESULT && response.data.RESULT.CODE === "INFO-200") {
-          lunch = "오늘 급식정보가 존재하지 않습니다.";
+          lunch = "오늘의 급식정보가 존재하지 않습니다.";
         } else {
           const data = response.data;
           const ddishNm = data.mealServiceDietInfo[1].row[0].DDISH_NM;
           lunch = ddishNm;
         }
-        await renderTemplate(res, req, "main.ejs", { user, lunch });
+        renderTemplate(res, req, "main.ejs", { user, lunch });
       }).catch(error => {
         console.error("Error fetching the lunch menu:", error);
       });
