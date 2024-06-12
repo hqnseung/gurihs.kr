@@ -12,7 +12,7 @@ const bodyParser = require('body-parser');
 const { default: axios } = require("axios");
 const mongoose = require('mongoose');
 const User = require("./models/User");
-const { DATABASE_URL, googleCredentials, sessionSecret, startType } = require("./env");
+const { DATABASE_URL, googleCredentials, sessionSecret, startType, marketSecret } = require("./env");
 const Post = require("./models/Post");
 
 const dataDir = path.resolve(`${process.cwd()}${path.sep}`); 
@@ -60,7 +60,6 @@ function(accessToken, refreshToken, profile, done) {
       email : profile.emails[0].value,
       picture : profile.photos[0].value
   }
-  console.log(`login | ${profile.displayName} / ${profile.emails[0].value}`)
   return done(null, user);
 }
 ));
@@ -171,7 +170,7 @@ app.post('/point/hsm', async (req, res) => {
 
   const errRetrun = res.status(400).json({ message: 'Error occurred while processing data' });
 
-  if (data.adminPassword !== "1245") return errRetrun // TODO: 비밀번호 db 연동할것
+  if (data.adminPassword !== marketSecret) return errRetrun
   if (points < 0) return errRetrun
 
   const userdb = (await User.find({ id: userId }))[0]
@@ -189,7 +188,7 @@ app.get('/board', async (req, res) => {
 
   if (req.query.id) {
     const post = (await Post.find({ id: req.query.id }))[0]
-    renderTemplate(res, req, "view.ejs", { post, user }) // TODO: db 연동 추가할것
+    renderTemplate(res, req, "view.ejs", { post, user })
   } else {
     renderTemplate(res, req, "board.ejs", { user })
   }
@@ -203,7 +202,6 @@ app.get('/auth/logout', (req, res, next)=>{
       return next(err);
     } else {
       res.redirect('/login');
-      console.log(`logout | ${user.name} / ${user.email}`)
     }
   });
 });
