@@ -157,7 +157,7 @@ app.get('/point', async (req, res) => {
 });
 
 
-app.post('/point/hsm', async (req, res) => {
+app.post('/point', async (req, res) => {
   const user = req.user;
 
   if (user === undefined) return errRetrun
