@@ -30,7 +30,7 @@
                 <input type="text" class="border-0" placeholder="게시물 검색" data-search>
 				<a href="#" class="clear-search disabled mt-0"><i class="fa fa-times color-red-dark"></i></a>
             </div>   
-            <div class="search-results disabled-search-list mt-3">
+            <!-- <div class="search-results disabled-search-list mt-3">
                 <div class="card card-style mx-0 px-2 p-0 mb-0">
                     <a href="/board?id=0001" class="d-flex py-2" data-filter-item data-filter-name="학생회 어플 소개">
                         <div>
@@ -43,7 +43,7 @@
                         </div>
                     </a>
                 </div>
-            </div>
+            </div> -->
         </div>	
         <div class="search-no-results disabled mt-4">
             <div class="card card-style">
@@ -92,20 +92,23 @@
                 </div>
             </div>
         </div>
-
-        <div class="content mt-n2 mb-4 ps-1">
-            <a href="/board?id=0001">
-                <div class="d-flex mb-3">
-                    <div class="align-self-center me-auto">
-                        <img src="/app/images/pictures/21s.jpg" class="rounded-m me-3" width="90">
+    
+        <% postList.forEach(function(post) { %>
+            <% console.log(post); %>
+            <div class="content mt-n2 mb-4 ps-1">
+                <a href="/board?id=<%= post.id %>">
+                    <div class="d-flex mb-3">
+                        <div class="align-self-center me-auto">
+                            <img src="<%= post.mainPicture ? post.mainPicture : 'https://img1.daumcdn.net/thumb/R1280x0.fjpg/?fname=http://t1.daumcdn.net/brunch/service/user/44wc/image/E0BV_cL-qckKkTqXi_SbH6VYrcs.jpg' %>" class="rounded-m me-3" width="90">
+                        </div>
+                        <div class="align-self-center w-100">
+                            <h5 class="font-15 pt-2"><%= post.title %></h5>
+                            <span class="color-theme font-11 opacity-50"><%= new Date(post.createdAt).toLocaleDateString() %> / <%= post.author %> 작성</span>
+                        </div>
                     </div>
-                    <div class="align-self-center w-100">
-                        <h5 class="font-15 pt-2">이런건 처음보죠?<br>구리고 학생회 어플을 소개합니다.</h5>
-                        <span class="color-theme font-11 opacity-50">2024년 6월 2일 / 한승우 작성</span>
-                    </div>
-                </div>
-            </a>
-        </div>
+                </a>
+            </div>
+        <% }); %>
 
     </div>
 
