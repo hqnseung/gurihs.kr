@@ -30,20 +30,23 @@
                 <input type="text" class="border-0" placeholder="게시물 검색" data-search>
 				<a href="#" class="clear-search disabled mt-0"><i class="fa fa-times color-red-dark"></i></a>
             </div>   
-            <!-- <div class="search-results disabled-search-list mt-3">
-                <div class="card card-style mx-0 px-2 p-0 mb-0">
-                    <a href="/board?id=0001" class="d-flex py-2" data-filter-item data-filter-name="학생회 어플 소개">
-                        <div>
-                            <img src="/app/images/pictures/21s.jpg" class="rounded-sm me-3" width="70">
-                        </div>
-                        <div>
-                            <span class="color-highlight font-300 d-block pt-0 text-uppercase font-10">2024년 6월 2일</span>
-                            <strong class="color-theme font-15 d-block mt-n2">구리고 학생회 어플을 소개합니다.</strong>
-                            <span class="font-11 d-block mb-n1 color-theme opacity-30">기술부장 한승우 작성</span>
-                        </div>
-                    </a>
+            <% postList.forEach(function(post) { %>
+                <div class="search-results disabled-search-list mt-3">
+                    <div class="card card-style mx-0 px-2 p-0 mb-0">
+                        <a href="/board?id=<%= post.id %>" class="d-flex py-2" data-filter-item data-filter-name="<%= post.title %>">
+                            <div>
+                                <img src="<%= post.mainPicture ? post.mainPicture : '/app/images/pictures/default.jpg' %>" class="rounded-sm me-3" width="70">
+                            </div>
+                            <div>
+                                <span class="color-highlight font-300 d-block pt-0 text-uppercase font-10">
+                                    <%= new Date(post.createdAt).toLocaleDateString() %>
+                                </span>
+                                <strong class="color-theme font-15 d-block mt-n2"><%= post.title %></strong>
+                            </div>
+                        </a>
+                    </div>
                 </div>
-            </div> -->
+            <% }); %>
         </div>	
         <div class="search-no-results disabled mt-4">
             <div class="card card-style">
