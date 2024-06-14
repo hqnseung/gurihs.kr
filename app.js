@@ -191,7 +191,6 @@ app.get('/board', async (req, res) => {
     renderTemplate(res, req, "view.ejs", { post, user })
   } else {
     const postList = (await Post.find())
-    console.log(postList);
     renderTemplate(res, req, "board.ejs", { user, postList })
   }
 });
