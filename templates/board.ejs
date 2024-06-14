@@ -30,9 +30,9 @@
                 <input type="text" class="border-0" placeholder="게시물 검색" data-search>
 				<a href="#" class="clear-search disabled mt-0"><i class="fa fa-times color-red-dark"></i></a>
             </div>   
-            <% postList.forEach(function(post) { %>
-                <div class="search-results disabled-search-list mt-3">
-                    <div class="card card-style mx-0 px-2 p-0 mb-0">
+            <div class="search-results disabled-search-list mt-3">
+                <div class="card card-style mx-0 px-2 p-0 mb-0">
+                    <% postList.forEach(function(post) { %>
                         <a href="/board?id=<%= post.id %>" class="d-flex py-2" data-filter-item data-filter-name="<%= post.title %>">
                             <div>
                                 <img src="<%= post.mainPicture ? post.mainPicture : '/app/images/pictures/default.jpg' %>" class="rounded-sm me-3" width="70">
@@ -44,9 +44,9 @@
                                 <strong class="color-theme font-15 d-block mt-n2"><%= post.title %></strong>
                             </div>
                         </a>
-                    </div>
+                    <% }); %>
                 </div>
-            <% }); %>
+            </div>
         </div>	
         <div class="search-no-results disabled mt-4">
             <div class="card card-style">
