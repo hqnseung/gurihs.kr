@@ -5,9 +5,6 @@ const PostSchema = new mongoose.Schema(
     id: {
       type: String
     },
-    title: {
-      type: String
-    },
     author: {
       type: String
     },
@@ -15,10 +12,13 @@ const PostSchema = new mongoose.Schema(
       type: Number,
       default: 0
     },
-    html: {
+    mainPicture: {
       type: String
     },
-    mainPicture: {
+    title: {
+      type: String
+    },
+    content: {
       type: String
     }
   },
