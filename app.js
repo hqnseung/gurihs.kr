@@ -146,11 +146,41 @@ app.post('/point', async (req, res) => {
   res.json({ message: 'Data received successfully' });
 });
 
+app.get('/post', async (req, res) => {
+  if (!req.user) return res.redirect('/login'); // TODO : 일반유저 접근 못하게 만들기
+
+  const userId = req.user.email.split('@')[0];
+  const user = await User.findOne({ id: userId });
+
+  renderTemplate(res, req, "post.ejs", { point: user.point.toLocaleString(), user: req.user });
+});
+
+app.post('/post', async (req, res) => {
+  if (!req.user) return res.status(400).json({ message: 'Error occurred while processing data' });
+
+  const { title, content } = req.body;
+
+  const newPost = new Post({
+    author: req.user.name.replace(/\d+/g, ''),
+    title,
+    content
+  });
+
+  try {
+      await newPost.save();
+      res.redirect("/board")
+  } catch (error) {
+      console.error(error);
+      res.status(500).send('글 작성 중 오류가 발생했습니다.');
+  }
+
+});
+
 app.get('/board', async (req, res) => {
   if (!req.user) return res.redirect('/login');
 
   if (req.query.id) {
-    const post = await Post.findOne({ id: req.query.id });
+    const post = await Post.findById(req.query.id);
     renderTemplate(res, req, "view.ejs", { post, user: req.user });
   } else {
     const postList = await Post.find();

@@ -12,10 +12,9 @@
 
 
     <div class="page-content">
-        
-        <div class="card mb-0 rounded-0" data-card-height="400" style="background-image: url('<%= post.mainPicture %>')">
+        <div class="card mb-0 rounded-0" data-card-height="400" style="background-image: url('<%= post.mainPicture ? post.mainPicture : 'https://img1.daumcdn.net/thumb/R1280x0.fjpg/?fname=http://t1.daumcdn.net/brunch/service/user/44wc/image/E0BV_cL-qckKkTqXi_SbH6VYrcs.jpg' %>')">
             <div class="card-top notch-clear">
-                <a href="/board" data-back-button class="icon icon-xl color-white font-15 font-700"><i class="fa fa-arrow-left color-white pt-2 font-14 me-n2"></i> 뒤로가기</a>
+                <a href="/board" class="icon icon-xl color-white font-15 font-700"><i class="fa fa-arrow-left color-white pt-2 font-14 me-n2"></i> 뒤로가기</a>
             </div>
             <div class="card-bottom p-3">
                 <h1 class="color-white pt-2">

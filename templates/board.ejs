@@ -33,7 +33,7 @@
             <div class="search-results disabled-search-list mt-3">
                 <div class="card card-style mx-0 px-2 p-0 mb-0">
                     <% postList.forEach(function(post) { %>
-                        <a href="/board?id=<%= post.id %>" class="d-flex py-2" data-filter-item data-filter-name="<%= post.title %>">
+                        <a href="/board?id=<%= post._id %>" class="d-flex py-2" data-filter-item data-filter-name="<%= post.title %>">
                             <div>
                                 <img src="<%= post.mainPicture ? post.mainPicture : '/app/images/pictures/default.jpg' %>" class="rounded-sm me-3" width="70">
                             </div>
@@ -98,7 +98,7 @@
     
         <% postList.forEach(function(post) { %>
             <div class="content mt-n2 mb-4 ps-1">
-                <a href="/board?id=<%= post.id %>">
+                <a href="/board?id=<%= post._id %>">
                     <div class="d-flex mb-3">
                         <div class="align-self-center me-auto">
                             <img src="<%= post.mainPicture ? post.mainPicture : 'https://img1.daumcdn.net/thumb/R1280x0.fjpg/?fname=http://t1.daumcdn.net/brunch/service/user/44wc/image/E0BV_cL-qckKkTqXi_SbH6VYrcs.jpg' %>" class="rounded-m me-3" width="90">
