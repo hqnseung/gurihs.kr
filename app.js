@@ -100,21 +100,25 @@ app.get('/login', (req, res) => {
 
 app.get('/main', async (req, res) => {
   if (!req.user) return res.redirect('/login');
+  const user = req.user
 
   const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
   const url = `https://open.neis.go.kr/hub/mealServiceDietInfo?Type=json&pIndex=1&pSize=100&ATPT_OFCDC_SC_CODE=J10&SD_SCHUL_CODE=7530054&KEY=6b2c5a8bd8284662bf5be43ffb875dc4&MLSV_YMD=${date}`;
 
-  try {
-    const response = await axios.get(url);
-    let lunch = "오늘의 급식정보가 존재하지 않습니다.";
-    if (response.data.RESULT.CODE !== "INFO-200") {
-      lunch = response.data.mealServiceDietInfo[1].row[0].DDISH_NM;
-    }
-    renderTemplate(res, req, "main.ejs", { user: req.user, lunch });
-  } catch (error) {
-    console.error("Error fetching the lunch menu:", error);
-    renderTemplate(res, req, "main.ejs", { user: req.user, lunch: "Error fetching lunch menu" });
-  }
+  axios.get(url)
+      .then(async response => {
+        let lunch = "";
+        if (response.data.RESULT && response.data.RESULT.CODE === "INFO-200") {
+          lunch = "오늘의 급식정보가 존재하지 않습니다.";
+        } else {
+          const data = response.data;
+          const ddishNm = data.mealServiceDietInfo[1].row[0].DDISH_NM;
+          lunch = ddishNm;
+        }
+        renderTemplate(res, req, "main.ejs", { user, lunch });
+      }).catch(error => {
+        console.error("Error fetching the lunch menu:", error);
+      });
 });
 
 app.get('/point', async (req, res) => {
@@ -163,7 +167,8 @@ app.post('/post', async (req, res) => {
   const newPost = new Post({
     author: req.user.name.replace(/\d+/g, ''),
     title,
-    content
+    content,
+    view: 0
   });
 
   try {
