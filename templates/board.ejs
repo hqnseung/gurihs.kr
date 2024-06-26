@@ -32,7 +32,7 @@
             </div>   
             <div class="search-results disabled-search-list mt-3">
                 <div class="card card-style mx-0 px-2 p-0 mb-0">
-                    <% postList.forEach(function(post) { %>
+                    <% postList.slice().reverse().forEach(function(post) { %>
                         <a href="/board?id=<%= post._id %>" class="d-flex py-2" data-filter-item data-filter-name="<%= post.title %>">
                             <div>
                                 <img src="<%= post.mainPicture ? post.mainPicture : '/app/images/pictures/default.jpg' %>" class="rounded-sm me-3" width="70">
@@ -53,7 +53,7 @@
                 <div class="content">
                     <h2>검색결과를 찾을수 없습니다.</h2>
                     <p>
-                        키워드를 정확하고 완전하게 작성해주세요.
+                        게시물 제목을 작성해주세요.
                     </p>
                 </div>
             </div>
@@ -68,7 +68,7 @@
                         <div class="card card-style p-3 mx-0">
                             <a href="#" class="d-flex">
                                 <div>
-                                    <img src="/app/images/pictures/18s.jpg" class="rounded-sm me-3" width="70">
+                                    <img src="https://hs.e-school.or.kr/webzine/vol13/assets/images/sub/sub07/sub07_img01.png" class="rounded-sm me-3" width="70">
                                 </div>
                                 <div>
                                     <span class="color-highlight font-300 d-block pt-0 text-uppercase font-10">날짜 미정</span>
@@ -96,7 +96,7 @@
             </div>
         </div>
     
-        <% postList.forEach(function(post) { %>
+        <% postList.slice().reverse().forEach(function(post) { %>
             <div class="content mt-n2 mb-4 ps-1">
                 <a href="/board?id=<%= post._id %>">
                     <div class="d-flex mb-3">

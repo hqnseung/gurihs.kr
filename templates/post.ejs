@@ -3,22 +3,29 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>글 작성</title>
+    <script src="https://cdn.tiny.cloud/1/cbs698nxmx4dgrq2x48z4jcxw3gjcln86xvgxlhdpwaecu2v/tinymce/7/tinymce.min.js" referrerpolicy="origin"></script>
+    <script>
+        tinymce.init({
+            selector: '#mytextarea',
+            plugins: 'link image code',
+            toolbar: 'undo redo | bold italic | alignleft aligncenter alignright | code'
+        });
+    </script>
 </head>
 <body>
-    <h1>글 작성</h1>
+    <h1>게시판 글 작성</h1>
     <form action="/post" method="POST">
+        <textarea id="mytextarea" name="content">여기에 글을 작성하세요!</textarea>
         <div>
-            <label for="title">제목:</label>
+            <label for="title">글제목:</label>
             <input type="text" id="title" name="title" required>
         </div>
         <div>
-            <label for="content">내용:</label>
-            <textarea id="content" name="content" rows="4" required></textarea>
+            <label for="mainPicture">배경사진:</label>
+            <input type="text" id="mainPicture" name="mainPicture" required>
         </div>
-        <div>
-            <button type="submit">작성하기</button>
-        </div>
+        <br>
+        <button type="submit">제출하기</button>
     </form>
 </body>
 </html>

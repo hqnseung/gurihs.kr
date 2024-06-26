@@ -162,12 +162,13 @@ app.get('/post', async (req, res) => {
 app.post('/post', async (req, res) => {
   if (!req.user) return res.status(400).json({ message: 'Error occurred while processing data' });
 
-  const { title, content } = req.body;
+  const { title, content, mainPicture } = req.body;
 
   const newPost = new Post({
     author: req.user.name.replace(/\d+/g, ''),
     title,
     content,
+    mainPicture,
     view: 0
   });
 
