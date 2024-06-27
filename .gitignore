@@ -1,8 +1,22 @@
+
+# env
 config
 env.js
+
+# .bat
 start.bat
+dev.bat
+
+# node_modules
 node_modules/
+
+# etc
 models/seed.js
+
+# copyright
 assets/
-sessions/
 LICENSE
+
+# session
+sessions/
+
