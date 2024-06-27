@@ -156,6 +156,8 @@ app.get('/post', async (req, res) => {
   const userId = req.user.email.split('@')[0];
   const user = await User.findOne({ id: userId });
 
+  if (user.role !== "admin") return renderTemplate(res, req, "403.ejs")
+
   renderTemplate(res, req, "post.ejs", { point: user.point.toLocaleString(), user: req.user });
 });
 
@@ -179,7 +181,6 @@ app.post('/post', async (req, res) => {
       console.error(error);
       res.status(500).send('글 작성 중 오류가 발생했습니다.');
   }
-
 });
 
 app.get('/board', async (req, res) => {
@@ -193,7 +194,6 @@ app.get('/board', async (req, res) => {
     const postList = await Post.find();
     renderTemplate(res, req, "board.ejs", { user: req.user, postList });
   }
-
 });
 
 app.get('/auth/logout', (req, res, next) => {
