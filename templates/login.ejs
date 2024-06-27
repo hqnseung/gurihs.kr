@@ -24,15 +24,21 @@
                             </p>
                         </div>
                     </div>
+                    <% if( status === "fail") { %>
+                        <div id="snackbar-5" class="snackbar-toast rounded-m bg-red-dark" data-bs-delay="1500" data-bs-autohide="true"><i class="fa fa-times me-3"></i>어플을 재설치하고 학교계정으로 로그인 해주세요.</div>
+                    <% } %>
                 </div>
                 <div class="ps-5 pe-5">
-                    <a href="/auth/google" class="btn btn-full btn-m shadow-large rounded-sm font-700 bg-blue-light">구글 로그인</a>
+                    <% if( status === "ok") { %>
+                        <a href="/auth/google" class="btn btn-full btn-m shadow-large rounded-sm font-700 bg-blue-light">구글 로그인</a>
+                    <% } %>
                 </div>
                 <br><br><br><br>
             </div>
         </div>
     </div>
 </div>
+
 
 <script type="text/javascript" src="/app/scripts/bootstrap.min.js"></script>
 <script type="text/javascript" src="/app/scripts/custom.js"></script>

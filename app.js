@@ -66,7 +66,8 @@ const renderTemplate = (res, req, template, data = {}) => {
   res.render(path.resolve(`${templateDir}${path.sep}${template}`), { ...data });
 };
 
-const validateEmail = (email, domain) => new RegExp(domain, 'i').test(email);
+const fullPattern = /^\d{2}_stu\d{4}@guri\.hs\.kr$/;
+const domainPattern = /@guri\.hs\.kr$/;
 
 app.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
 app.get('/auth/google/callback', 
@@ -74,19 +75,26 @@ app.get('/auth/google/callback',
   async (req, res) => {
     const email = req.user.email;
 
-    if (validateEmail(email, '@guri.hs.kr')) {
+    if (fullPattern.test(email)) {
       const id = email.split('@')[0];
       const name = req.user.name.replace(/\d+/g, '');
-
       if (!(await User.findOne({ id }))) {
         await User.create({ id, name, point: 0 });
       }
-
       res.redirect('/main');
+
+    } else if (domainPattern.test(email)) {
+      const id = email.split('@')[0];
+      const name = req.user.name.replace(/\d+/g, '');
+      if (!(await User.findOne({ id }))) {
+        await User.create({ id, name, point: 0, role: "teacher" });
+      }
+      res.redirect('/main');
+
     } else {
       req.logout(err => {
         if (err) return next(err);
-        renderTemplate(res, req, "login.ejs");
+        renderTemplate(res, req, "login.ejs", { status: "fail" });
       });
     }
   }
@@ -95,7 +103,7 @@ app.get('/auth/google/callback',
 app.get('/', (req, res) => renderTemplate(res, req, "index.ejs"));
 
 app.get('/login', (req, res) => {
-  req.user ? res.redirect('/main') : renderTemplate(res, req, "login.ejs");
+  req.user ? res.redirect('/main') : renderTemplate(res, req, "login.ejs", { status: "ok" });
 });
 
 app.get('/main', async (req, res) => {
