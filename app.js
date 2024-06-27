@@ -184,14 +184,16 @@ app.post('/post', async (req, res) => {
 
 app.get('/board', async (req, res) => {
   if (!req.user) return res.redirect('/login');
+  const id = req.query.id
 
-  if (req.query.id) {
-    const post = await Post.findById(req.query.id);
+  if (id && id.match(/^[0-9a-fA-F]{24}$/) && await Post.findById(id)) {
+    const post = await Post.findById(id);
     renderTemplate(res, req, "view.ejs", { post, user: req.user });
   } else {
     const postList = await Post.find();
     renderTemplate(res, req, "board.ejs", { user: req.user, postList });
   }
+
 });
 
 app.get('/auth/logout', (req, res, next) => {
