@@ -35,7 +35,7 @@
                     <% postList.slice().reverse().forEach(function(post) { %>
                         <a href="/board?id=<%= post._id %>" class="d-flex py-2" data-filter-item data-filter-name="<%= post.title %>">
                             <div>
-                                <img src="<%= post.mainPicture ? post.mainPicture : '/app/images/pictures/default.jpg' %>" class="rounded-sm me-3" width="70">
+                                <img src="<%= post.mainPicture ? post.mainPicture : 'https://img1.daumcdn.net/thumb/R1280x0.fjpg/?fname=http://t1.daumcdn.net/brunch/service/user/44wc/image/E0BV_cL-qckKkTqXi_SbH6VYrcs.jpg' %>" class="rounded-sm me-3" width="70">
                             </div>
                             <div>
                                 <span class="color-highlight font-300 d-block pt-0 text-uppercase font-10">
