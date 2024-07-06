@@ -106,6 +106,20 @@ app.get('/login', (req, res) => {
   req.user ? res.redirect('/main') : renderTemplate(res, req, "login.ejs", { status: "ok" });
 });
 
+function formatDate(date) {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0'); // 월은 0부터 시작하므로 +1
+  const day = date.getDate().toString().padStart(2, '0');
+  return `${year}${month}${day}`;
+}
+
+function formatDateForDisplay(date) {
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
 app.get('/main', async (req, res) => {
   if (!req.user) return res.redirect('/login');
   const user = req.user
@@ -113,20 +127,36 @@ app.get('/main', async (req, res) => {
   const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
   const url = `https://open.neis.go.kr/hub/mealServiceDietInfo?Type=json&pIndex=1&pSize=100&ATPT_OFCDC_SC_CODE=J10&SD_SCHUL_CODE=7530054&KEY=6b2c5a8bd8284662bf5be43ffb875dc4&MLSV_YMD=${date}`;
 
-  axios.get(url)
-      .then(async response => {
-        let lunch = "";
-        if (response.data.RESULT && response.data.RESULT.CODE === "INFO-200") {
-          lunch = "오늘의 급식정보가 존재하지 않습니다.";
-        } else {
-          const data = response.data;
-          const ddishNm = data.mealServiceDietInfo[1].row[0].DDISH_NM;
-          lunch = ddishNm;
-        }
-        renderTemplate(res, req, "main.ejs", { user, lunch });
-      }).catch(error => {
-        console.error("Error fetching the lunch menu:", error);
-      });
+  let currentDate = new Date();
+
+  const fetchLunchInfo = async () => {
+      let lunch = "오늘의 급식정보가 존재하지 않습니다.";
+      let attempts = 0;  
+  
+      while (attempts < 4) {
+          try {
+              const urlWithDate = `${url}?date=${formatDate(currentDate)}`;
+              const response = await axios.get(urlWithDate);
+  
+              if (response.data.RESULT && response.data.RESULT.CODE === "INFO-200") {
+                  attempts++;
+                  currentDate.setDate(currentDate.getDate() + 1);
+              } else {
+                  const data = response.data;
+                  const ddishNm = data.mealServiceDietInfo[1].row[0].DDISH_NM;
+                  lunch = ddishNm;
+                  break;
+              }
+          } catch (error) {
+              console.error("Error fetching the lunch menu:", error);
+              break;
+          }
+      }
+  
+      renderTemplate(res, req, "main.ejs", { user, lunch, date: formatDateForDisplay(currentDate) });
+  };
+  
+  fetchLunchInfo();
 });
 
 app.get('/point', async (req, res) => {
@@ -159,15 +189,25 @@ app.post('/point', async (req, res) => {
 });
 
 app.get('/post', async (req, res) => {
-  if (!req.user) return res.redirect('/login'); // TODO : 일반유저 접근 못하게 만들기
+  if (!req.user) return res.redirect('/login'); 
 
   const userId = req.user.email.split('@')[0];
   const user = await User.findOne({ id: userId });
 
   if (user.role !== "admin") return renderTemplate(res, req, "403.ejs")
 
-  renderTemplate(res, req, "post.ejs", { point: user.point.toLocaleString(), user: req.user });
+  renderTemplate(res, req, "post.ejs", { user: req.user });
 });
+
+app.get('/gugocup', async (req, res) => {
+  if (!req.user) return res.redirect('/login'); 
+
+  const userId = req.user.email.split('@')[0];
+  const user = await User.findOne({ id: userId });
+
+  renderTemplate(res, req, "gugocup.ejs", { user: req.user });
+});
+
 
 app.post('/post', async (req, res) => {
   if (!req.user) return res.status(400).json({ message: 'Error occurred while processing data' });
@@ -233,5 +273,10 @@ const startServer = () => {
     });
   }
 };
+
+
+process.on('uncaughtException', (error) => {
+  console.error(`[ uncaughtException ] : ${error.message}`);
+});
 
 startServer();

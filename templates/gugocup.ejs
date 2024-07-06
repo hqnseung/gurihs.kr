@@ -1,0 +1,35 @@
+<%- include("./partials/header") %>
+
+<script>swingWebViewPlugin.app.login.doAppLogin("<%= user.email.substring(0, user.email.indexOf('@')) %>","<%= user.name.replace(/\d+/g, '') %>"); </script>
+
+<div id="page">
+    <div id="footer-bar" class="footer-bar-1">
+        <a href="/board"><i class="fa fa-window-restore"></i><span>소식지</span></a>
+        <a href="/main"><i class="fa fa-home"></i><span>홈</span></a>
+        <a href="/point"><i class="fa fa-star"></i><span>구고포인트</span></a>
+        <a href="/gugocup" class="active-nav"><i class="fa fa-futbol"></i><span>구고컵</span></a>
+    </div>
+
+    <div class="page-content pb-0">
+        <div data-card-height="cover" class="card">
+            <div class="card-center text-center">
+                <h1 class="center-text mb-5"><i class="far fa-4x fa-clock color-blue-dark "></i></h1>
+                <h1 class="center-text color-white bolder font-36 font-900 mb-0">기대해주세요!</h1>
+                <p class="center-text mb-3" style="color: rgb(195, 195, 255);">구고컵 페이지는 현재 준비중입니다.</p>
+
+                <p class="boxed-text-l mt-4 mb-5 color-white opacity-80">
+                    구고컵은 2학기에 진행됩니다. 열심히 준비하겠습니다.<br>이 페이지가 열리면 알림을 통해 알려드릴게요!
+                </p>
+                <div class="row me-5 ms-5 mb-0 mt-5">
+                    <div>
+                        <a href="/main" class="back-button btn btn-m bg-highlight rounded-sm btn-full text-uppercase font-900 shadow-l">홈으로 이동</a>
+                    </div>
+                </div>
+            </div>
+            <div class="card-overlay-infinite preload-img" data-src="app/images/pictures/_bg-infinite.jpg"></div>
+            <div class="card-overlay bg-black opacity-80"></div>
+        </div>
+
+    </div>
+
+    <%- include("./partials/footer", { user }) %>
