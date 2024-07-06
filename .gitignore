@@ -6,6 +6,7 @@ env.js
 # .bat
 start.bat
 dev.bat
+pull&start.bat
 
 # node_modules
 node_modules/
