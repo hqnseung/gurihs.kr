@@ -115,9 +115,9 @@ function formatDate(date) {
 
 function formatDateForDisplay(date) {
   const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
-  return `${year}-${month}-${day}`;
+  const month = (date.getMonth() + 1).toString();
+  const day = date.getDate().toString();
+  return `${month}월 ${day}일`;
 }
 
 app.get('/main', async (req, res) => {
