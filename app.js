@@ -274,6 +274,7 @@ const startServer = () => {
   }
 };
 
+require("./src/cron")
 
 process.on('uncaughtException', (error) => {
   console.error(`[ uncaughtException ] : ${error.message}`);
