@@ -3,11 +3,11 @@
 <script>swingWebViewPlugin.app.login.doAppLogin("<%= user.email.substring(0, user.email.indexOf('@')) %>","<%= user.name.replace(/\d+/g, '') %>"); </script>
 
 <style>
-    img {
-        width: 100%; 
-        height: auto; 
-        max-width: 100vw; 
-    }
+        img {
+            display: block;    /* 이미지 주변의 여백 제거 */
+            max-width: 100%;   /* 부모 요소의 너비를 초과하지 않도록 */
+            height: auto;      /* 비율 유지 */
+        }
 </style>
 
 <div id="page">
@@ -15,7 +15,7 @@
         <a href="/board" class="active-nav"><i class="fa fa-window-restore"></i><span>소식지</span></a>
         <a href="/main"><i class="fa fa-home"></i><span>홈</span></a>
         <a href="/point"><i class="fa fa-star"></i><span>구고포인트</span></a>
-        <a href="" data-menu="menu-sidebar-right-1"><i class="fa fa-list-ul"></i><span>마이페이지</span></a>
+        <a href="/gugocup"><i class="fa fa-futbol"></i><span>구고컵</span></a>
     </div>
 
 
