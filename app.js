@@ -73,6 +73,14 @@ app.get('/auth/google', passport.authenticate('google', { scope: ['email', 'prof
 app.get('/auth/google/callback', 
   passport.authenticate('google', { failureRedirect: '/login' }),
   async (req, res) => {
+    console.log(req.user)
+    renderTemplate(res, req, "redirect.ejs")
+  }
+);
+
+app.get('/auth/google/callback/app', 
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  async (req, res) => {
     const email = req.user.email;
 
     if (fullPattern.test(email)) {
@@ -98,7 +106,7 @@ app.get('/auth/google/callback',
       });
     }
   }
-);
+)
 
 app.get('/', (req, res) => renderTemplate(res, req, "index.ejs"));
 

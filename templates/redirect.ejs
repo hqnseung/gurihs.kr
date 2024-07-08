@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>SNS Login Page</title>
+    <script>
+        function gotoSnsLoginPageFn(res) {
+            var runUrl = 'gurihs://app?function=command&linkUrl=' + btoa("loginResCallback('" + res + "');");
+            window.location.href = runUrl;
+        }
+
+        window.onload = function() {
+            var res = '<%= res %>'; 
+
+            gotoSnsLoginPageFn(res);
+        }
+    </script>
+</head>
