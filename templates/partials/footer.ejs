@@ -47,17 +47,27 @@
                         <div class="list-group list-custom-small list-icon-0">
                             <a href="#">
                                 <i class="fa font-12 fa-edit gradient-blue rounded-sm color-white"></i>
-                                <span>학생회 문의실</span>
+                                <span id="googleform">학생회 문의실</span>
                                 <i class="fa fa-angle-right"></i>
                             </a>
                             <a href="https://www.instagram.com/darkcircle_hanseung/">
                                 <i class="fa font-12 fa-code gradient-blue rounded-sm color-white"></i>
-                                <span>개발자 연락처</span>
+                                <span id="developer-sns">개발자 연락처</span>
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         </div>
                     </div>
                 </div>
+
+                <script>
+                    document.getElementById('developer-sns').addEventListener('click', function(event) {
+                        swingWebViewPlugin.app.methods.doExternalOpen('https://www.instagram.com/darkcircle_hanseung/');
+                    });
+
+                    document.getElementById('googleform').addEventListener('click', function(event) {
+                        swingWebViewPlugin.app.methods.doExternalOpen('https://test.com');
+                    });
+                </script>
 
             </div>
             
