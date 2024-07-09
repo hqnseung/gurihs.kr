@@ -194,6 +194,7 @@ app.post('/point', async (req, res) => {
     reason: "구리고등학교 매점"
   })
   await log.save()
+  console.log(`Gugopoint 결제완료: ${user.id}(${user.name}) "${-points}" - "구리고등학교 매점"`)
 
   res.json({ message: 'Data received successfully' });
 });
