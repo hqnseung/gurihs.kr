@@ -22,4 +22,4 @@ cron.schedule('0 10 * * *', () => {
     timezone: "Asia/Seoul" 
 });
 
-console.log('Cron 작업이 설정되었습니다.');
+console.log('Cron schedule started - 10am');

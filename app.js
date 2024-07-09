@@ -15,6 +15,7 @@ const { OAuth2Strategy: GoogleStrategy } = require('passport-google-oauth');
 const User = require("./models/User");
 const Post = require("./models/Post");
 const { DATABASE_URL, googleCredentials, sessionSecret, startType, marketSecret } = require("./env");
+const Log = require("./models/Log");
 
 const app = express();
 const dataDir = path.resolve(`${process.cwd()}${path.sep}`);
@@ -186,6 +187,14 @@ app.post('/point', async (req, res) => {
 
   user.point -= points;
   await user.save();
+  const log = new Log({
+    userId: user.id,
+    userName: user.name,
+    point: -points,
+    reason: "구리고등학교 매점"
+  })
+  await log.save()
+
   res.json({ message: 'Data received successfully' });
 });
 
@@ -199,16 +208,6 @@ app.get('/post', async (req, res) => {
 
   renderTemplate(res, req, "post.ejs", { user: req.user });
 });
-
-app.get('/gugocup', async (req, res) => {
-  if (!req.user) return res.redirect('/login'); 
-
-  const userId = req.user.email.split('@')[0];
-  const user = await User.findOne({ id: userId });
-
-  renderTemplate(res, req, "gugocup.ejs", { user: req.user });
-});
-
 
 app.post('/post', async (req, res) => {
   if (!req.user) return res.status(400).json({ message: 'Error occurred while processing data' });
@@ -230,6 +229,15 @@ app.post('/post', async (req, res) => {
       console.error(error);
       res.status(500).send('글 작성 중 오류가 발생했습니다.');
   }
+});
+
+app.get('/gugocup', async (req, res) => {
+  if (!req.user) return res.redirect('/login'); 
+
+  const userId = req.user.email.split('@')[0];
+  const user = await User.findOne({ id: userId });
+
+  renderTemplate(res, req, "gugocup.ejs", { user: req.user });
 });
 
 app.get('/board', async (req, res) => {
