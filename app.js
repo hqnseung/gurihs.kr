@@ -17,7 +17,6 @@ const User = require("./models/User");
 const Post = require("./models/Post");
 
 const DATABASE_URL = process.env.DATABASE_URL
-const googleCredentials = process.env.googleCredentials
 const sessionSecret = process.env.sessionSecret
 const startType = process.env.startType
 const marketSecret = process.env.marketSecret
@@ -54,9 +53,9 @@ passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
 
 passport.use(new GoogleStrategy({
-  clientID: googleCredentials.web.client_id,
-  clientSecret: googleCredentials.web.client_secret,
-  callbackURL: googleCredentials.web.redirect_uris[0],
+  clientID: process.env.GOOGLE_CLIENT_ID,
+  clientSecret: process.env.GOOGLE_CLIENTID_SECRET,
+  callbackURL: process.env.GOOGLE_REDIRECT_URIS,
 }, async (accessToken, refreshToken, profile, done) => {
   const user = {
     provider: profile.provider,
