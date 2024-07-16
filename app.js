@@ -1,3 +1,4 @@
+require('dotenv').config();
 const fs = require("node:fs");
 const express = require("express");
 const expressSanitizer = require("express-sanitizer");
@@ -14,7 +15,12 @@ const { OAuth2Strategy: GoogleStrategy } = require('passport-google-oauth');
 
 const User = require("./models/User");
 const Post = require("./models/Post");
-const { DATABASE_URL, googleCredentials, sessionSecret, startType, marketSecret } = require("./env");
+
+const DATABASE_URL = process.env.DATABASE_URL
+const googleCredentials = process.env.googleCredentials
+const sessionSecret = process.env.sessionSecret
+const startType = process.env.startType
+const marketSecret = process.env.marketSecret
 const Log = require("./models/Log");
 
 const app = express();
