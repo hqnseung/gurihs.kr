@@ -21,6 +21,10 @@ const sessionSecret = process.env.sessionSecret
 const startType = process.env.startType
 const marketSecret = process.env.marketSecret
 const Log = require("./models/Log");
+const { schedule } = require('node-cron');
+const Schedule = require('./models/Schedules');
+const Match = require('./models/match');
+const Team = require('./models/team');
 
 const app = express();
 const dataDir = path.resolve(`${process.cwd()}${path.sep}`);
@@ -240,10 +244,10 @@ app.post('/post', async (req, res) => {
 app.get('/gugocup', async (req, res) => {
   if (!req.user) return res.redirect('/login'); 
 
-  const userId = req.user.email.split('@')[0];
-  const user = await User.findOne({ id: userId });
-
-  renderTemplate(res, req, "gugocup.ejs", { user: req.user });
+  const allSchedule = await Schedule.find();
+  const matches = await Match.find();
+  const allTeams = await Team.find();
+  renderTemplate(res, req, "gugocup.ejs", { user: req.user, allSchedule, matches, allTeams });
 });
 
 app.get('/board', async (req, res) => {
