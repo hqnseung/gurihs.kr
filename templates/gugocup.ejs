@@ -11,26 +11,22 @@
 
 <div id="page">
     <div class="card card-style mx-0 rounded-0 position-fixed" data-card-height="450" style="top:0px; width:100%; background-image: url(https://gurihs.kr/index/img/guri2.jpg);">
-		<div class="card-bottom mb-4 no-click">
-			<div class="content no-click">
-				<span class="bg-highlight px-2 py-1 font-10 rounded-xs text-uppercase font-600">council Events</span>
-				<h1 class="color-white mt-1">GUGOCUP 2024</h1>
-				<h2 class="color-white opacity-60 font-13 mt-n2 font-400">많은점이 바뀐 구고컵이 돌아왔습니다. 준비되셨나요?</h2>
-			</div>
-		</div>
-		<!-- <div class="card-bottom mb-4">
-			<a href="#" data-menu="menu-event-sample" class="btn btn-m text-uppercase rounded-sm bg-highlight float-end mx-3 my-4 font-700">Join</a>
-		</div> -->
-		<div class="card-overlay bg-gradient rounded-0"></div>
-	</div>
-	<div class="card card-style bg-transparent shadow-0 no-click" data-card-height="390"></div>
-
+        <div class="card-bottom mb-4 no-click">
+            <div class="content no-click">
+                <span class="bg-highlight px-2 py-1 font-10 rounded-xs text-uppercase font-600">council Events</span>
+                <h1 class="color-white mt-1">GUGOCUP 2024</h1>
+                <h2 class="color-white opacity-60 font-13 mt-n2 font-400">많은점이 바뀐 구고컵이 돌아왔습니다. 준비되셨나요?</h2>
+            </div>
+        </div>
+        <div class="card-overlay bg-gradient rounded-0"></div>
+    </div>
+    <div class="card card-style bg-transparent shadow-0 no-click" data-card-height="390"></div>
 
     <div class="page-content pb-0 mb-4">
-		<div class="card card-style mx-0">
-            
-			<div class="divider mx-auto mt-3 bg-gray-dark opacity-30 rounded-s mb-n1" style="height:5px; width:50px;"></div>
-        	<div class="content">
+        <div class="card card-style mx-0">
+            <div class="divider mx-auto mt-3 bg-gray-dark opacity-30 rounded-s mb-n1" style="height:5px; width:50px;"></div>
+            <div class="content">
+                <!-- Next Match -->
                 <div class="d-flex px-3 pb-3">
                     <div class="align-self-center">
                         <h4 class="mb-0">다음 경기</h4>
@@ -43,18 +39,46 @@
                     <div class="splide__track">
                         <div class="splide__list">
                             <div class="splide__slide px-3">
-                                <div class="mb-3">
-                                    <a href="#" class="d-flex">
-                                        <div>
-                                            <img src="https://imgdb.net/storage/uploads/2b9f9d1a0de8a1a5ea2d236aa329e4a5bcab37311e987f44919d7dfe40f9aa01.png" class="rounded-sm me-3" width="70">
-                                        </div>
-                                        <div>
-                                            <span class="color-highlight font-300 d-block pt-0 text-uppercase font-10">8월 17일 - 01:10 PM</span>
-                                            <strong class="color-theme font-16 d-block mt-n2">[조별 리그] 2-4 vs 2-2</strong>
-                                            <span class="font-11 d-block mb-n1 color-theme opacity-30"><i class="fa fa-map-marker pe-2"></i>Texas State Park County</span>
-                                        </div>
-                                    </a>
-                                </div>
+                                <% 
+                                const now = new Date();
+                                const futureSchedules = allSchedule.filter(schedule => new Date(schedule.date) > now);
+                                const nextSchedule = futureSchedules.length ? futureSchedules.sort((a, b) => new Date(a.date) - new Date(b.date))[0] : null;
+                                %>
+                                <% if (nextSchedule) { %>
+                                    <div class="mb-3">
+                                        <a href="#" class="d-flex">
+                                            <div>
+                                                <img src="https://imgdb.net/storage/uploads/2b9f9d1a0de8a1a5ea2d236aa329e4a5bcab37311e987f44919d7dfe40f9aa01.png" class="rounded-sm me-3" width="70">
+                                            </div>
+                                            <div>
+                                                <!-- Format the date and time -->
+                                                <% const nextDate = new Date(nextSchedule.date); %>
+                                                <span class="color-highlight font-300 d-block pt-0 text-uppercase font-10">
+                                                    <%= `${nextDate.getMonth() + 1}월 ${nextDate.getDate()}일 - 01:00 PM` %>
+                                                </span>
+                                                
+                                                <% 
+                                                const nextTeam1 = allTeams.find(t => t._id.toString() === nextSchedule.team1.toString());
+                                                const nextTeam2 = allTeams.find(t => t._id.toString() === nextSchedule.team2.toString());
+                                                %>
+                                                
+                                                <strong class="color-theme font-16 d-block mt-n2">
+                                                    <!-- Show grade-class format -->
+                                                    <% if (nextTeam1 && nextTeam2) { %>
+                                                        <%= `${nextTeam1.grade}-${nextTeam1.class} vs ${nextTeam2.grade}-${nextTeam2.class}` %>
+                                                    <% } else { %>
+                                                        Team information not available
+                                                    <% } %>
+                                                </strong>
+                                                
+                                                <span class="font-11 d-block mb-n1 color-theme opacity-30">
+                                                    <i class="fa fa-map-marker pe-2"></i>
+                                                    구리고등학교 운동장
+                                                </span>
+                                            </div>
+                                        </a>
+                                    </div>
+                                <% } %>
                             </div>
                         </div>
                     </div>
@@ -62,27 +86,34 @@
 
                 <div class="divider divider-margins"></div>
                 
+                <!-- All Matches -->
                 <div class="d-flex px-3 pb-3">
                     <div class="align-self-center">
                         <h4 class="mb-0">모든 경기</h4>
-                            <p class="mt-n1 mb-0">
-                                다음 있을 경기들을 확인하세요!
+                        <p class="mt-n1 mb-0">
+                            다음 있을 경기들을 확인하세요!
                         </p>
                     </div>
                     <div class="align-self-center ms-auto">
                         <a href="#" class="font-12">View All</a>
                     </div>
                 </div>
-                <% allSchedule.forEach(schedule => { %>
+                <% 
+                const remainingSchedules = allSchedule
+                    .filter(schedule => new Date(schedule.date) > now)
+                    .sort((a, b) => new Date(a.date) - new Date(b.date));
+                %>
+                <% remainingSchedules.forEach(schedule => { %>
                     <div class="d-flex px-2 mb-3">
                         <div>
                             <img src="https://imgdb.net/storage/uploads/2b9f9d1a0de8a1a5ea2d236aa329e4a5bcab37311e987f44919d7dfe40f9aa01.png" 
                                  class="rounded-sm me-3 mt-3" width="55">
                         </div>
                         <div>
-                            <!-- Format the date to your preferred format -->
+                            <!-- Format the date and time -->
+                            <% const scheduleDate = new Date(schedule.date); %>
                             <span class="color-highlight font-300 d-block pt-2 text-uppercase font-10">
-                                <%= new Date(schedule.date).toLocaleDateString('en-US', { day: 'numeric', month: 'long', year: 'numeric' }) %>
+                                <%= `${scheduleDate.getMonth() + 1}월 ${scheduleDate.getDate()}일 - 01:00 PM` %>
                             </span>
                             
                             <% 
@@ -112,68 +143,43 @@
                     </div>
                 <% }); %>
 
-        	<div class="divider divider-margins"></div>
+                <div class="divider divider-margins"></div>
 
+                <div class="d-flex px-3">
+                    <div class="align-self-center">
+                        <h4 class="mb-0">이벤트</h4>
+                        <p class="mt-n1 mb-n2">
+                            구고컵 이벤트들을 확인하세요!
+                        </p>
+                    </div>
+                    <div class="align-self-center ms-auto">
+                        <a href="#" class="font-12">View All</a>
+                    </div>
+                </div>
 
-			<div class="d-flex px-3">
-				<div class="align-self-center">
-					<h4 class="mb-0">이벤트</h4>
-					<p class="mt-n1 mb-n2">
-						구고컵 이벤트들을 확인하세요!
-					</p>
-				</div>
-				<div class="align-self-center ms-auto">
-					<a href="#" class="font-12">View All</a>
-				</div>
-			</div>
-
-        	<div class="content mb-n4">
-            	<div class="row">
-                	<div class="col-6">
-                    	<a href="#" data-menu="menu-event-sample" class="card card-style mx-0 bg-3 mb-n3" data-card-height="250">
-                        	<div class="card-top m-3">
-                            	<span class="btn btn-xxs bg-theme text-uppercase float-end rounded-sm font-800">Join</span>
-                        	</div>
-                        	<div class="card-bottom p-3 mb-4 pb-4">
-                            	<h2 class="color-white">승부예측</h2>   
-                        	</div>
-                        	<div class="card-bottom p-3">
-                            	<div class="float-end">
-                                	<img src="images/avatars/1s.png" class="border border-white bg-yellow-light rounded-circle me-n3" width="25">
-                                	<img src="images/avatars/6s.png" class="border border-white bg-pink-dark rounded-circle me-n3" width="25">
-                                	<img src="images/avatars/5s.png" class="border border-white bg-highlight rounded-circle" width="25">
-                            	</div>
-                        	</div>
-                        	<div class="card-overlay bg-gradient"></div>
-                    	</a>
-                	</div>
-                	<div class="col-6">
-                    	<a href="#" data-menu="menu-event-sample" class="card card-style mx-0 bg-20 mb-n3" data-card-height="250">
-                        	<div class="card-top m-3">
-                            	<span class="btn btn-xxs bg-theme text-uppercase float-end rounded-sm font-800">Join</span>
-                        	</div>
-                        	<div class="card-bottom p-3 mb-4 pb-4">
-                            	<h2 class="color-white">Selling 101 &  Marketing</h2>
-                            	<p class="mb-0 mt-n2 opacity-50 font-10 color-white">Invite Only Based Event</p>
-                        	</div>
-                        	<div class="card-bottom p-3">
-                            	<div class="float-end">
-                                	<img src="images/avatars/1s.png" class="border border-white bg-yellow-light rounded-circle me-n3" width="25">
-                                	<img src="images/avatars/6s.png" class="border border-white bg-pink-dark rounded-circle me-n3" width="25">
-                                	<img src="images/avatars/5s.png" class="border border-white bg-highlight rounded-circle" width="25">
-                            	</div>
-                        	</div>
-                        	<div class="card-overlay bg-gradient"></div>
-                    	</a>
-                	</div>
-            	</div>
-        	</div>
-            <br><br><br><br>
-		</div>
+                <div class="content mb-n4">
+                    <div class="row">
+                        <div class="col">
+                            <a href="#" data-menu="menu-event-sample" class="card card-style mx-0 bg-3 mb-n3" data-card-height="250">
+                                <div class="card-top m-3">
+                                    <span class="btn btn-xxs bg-theme text-uppercase float-end rounded-sm font-800">참가하기</span>
+                                </div>
+                                <div class="card-bottom p-3 mb-4 pb-4">
+                                    <h2 class="color-white">승부예측</h2>  
+                                    <p class="mb-0 mt-n2 opacity-60 font-15 color-white">경기 결과를 예측하고 구고포인트를 받으세요!</p> 
+                                </div>
+                                <div class="card-overlay bg-gradient"></div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <br><br><br><br>
+            </div>
+        </div>
     </div>
     <!-- End of Page Content-->
 
-    <div id="204vs202" class="menu menu-box-bottom" data-menu-height="cover" data-menu-width="cover">
+    <div id="66b044eed90e856b744367c5" class="menu menu-box-bottom" data-menu-height="cover" data-menu-width="cover">
         <div class="card bg-18 rounded-0" data-card-height="350">
             <div class="card-top">
                 <a href="#" class="close-menu float-start btn btn-m rounded-sm font-700 text-uppercase m-3 bg-white color-black">Get Tickets</a>
