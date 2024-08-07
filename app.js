@@ -21,10 +21,9 @@ const sessionSecret = process.env.sessionSecret
 const startType = process.env.startType
 const marketSecret = process.env.marketSecret
 const Log = require("./models/Log");
-const { schedule } = require('node-cron');
 const Schedule = require('./models/Schedules');
-const Match = require('./models/match');
-const Team = require('./models/team');
+const Match = require('./models/Match');
+const Team = require('./models/Team');
 
 const app = express();
 const dataDir = path.resolve(`${process.cwd()}${path.sep}`);
@@ -244,10 +243,29 @@ app.post('/post', async (req, res) => {
 app.get('/gugocup', async (req, res) => {
   if (!req.user) return res.redirect('/login'); 
 
-  const allSchedule = await Schedule.find();
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+  const endOfDay = new Date();
+  endOfDay.setHours(23, 59, 59, 999);
+  
+  let todaySchedule;
+  
+  Schedule.find({
+      date: {
+          $gte: startOfDay,
+          $lt: endOfDay 
+      }
+  })
+  .populate('team1')
+  .populate('team2')
+  .then(schedules => {
+      todaySchedule = schedules;
+  })
+  
   const matches = await Match.find();
   const allTeams = await Team.find();
-  renderTemplate(res, req, "gugocup.ejs", { user: req.user, allSchedule, matches, allTeams });
+  const allMatches = (await Match.find().populate('team1').populate('team2')).sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 3);
+  renderTemplate(res, req, "gugocup.ejs", { user: req.user, todaySchedule, matches, allTeams, allMatches });
 });
 
 app.get('/board', async (req, res) => {

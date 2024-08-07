@@ -2,15 +2,14 @@
 
 <script>swingWebViewPlugin.app.login.doAppLogin("<%= user.email.substring(0, user.email.indexOf('@')) %>","<%= user.name.replace(/\d+/g, '') %>"); </script>
 
-<div id="footer-bar" class="footer-bar-1">
-    <a href="/board"><i class="fa fa-window-restore"></i><span>소식지</span></a>
-    <a href="/main"><i class="fa fa-home"></i><span>홈</span></a>
-    <a href="/point"><i class="fa fa-star"></i><span>구고포인트</span></a>
-    <a href="/gugocup" class="active-nav"><i class="fa fa-futbol"></i><span>구고컵</span></a>
-</div>  
-
 <div id="page">
-    <div class="card card-style mx-0 rounded-0 position-fixed" data-card-height="450" style="top:0px; width:100%; background-image: url(https://gurihs.kr/index/img/guri2.jpg);">
+    <div id="footer-bar" class="footer-bar-1">
+        <a href="/board"><i class="fa fa-window-restore"></i><span>소식지</span></a>
+        <a href="/main"><i class="fa fa-home"></i><span>홈</span></a>
+        <a href="/point"><i class="fa fa-star"></i><span>구고포인트</span></a>
+        <a href="/gugocup" class="active-nav"><i class="fa fa-futbol"></i><span>구고컵</span></a>
+    </div>  
+    <div class="card card-style mx-0 rounded-0 position-fixed" data-card-height="450" style="top:0px; width:100%; background-image: url(/index/img/guri2.jpg);">
         <div class="card-bottom mb-4 no-click">
             <div class="content no-click">
                 <span class="bg-highlight px-2 py-1 font-10 rounded-xs text-uppercase font-600">council Events</span>
@@ -29,59 +28,52 @@
                 <!-- Next Match -->
                 <div class="d-flex px-3 pb-3">
                     <div class="align-self-center">
-                        <h4 class="mb-0">다음 경기</h4>
+                        <h4 class="mb-0">오늘 경기</h4>
                         <p class="mt-n1 mb-0">
-                            다음 있을 경기를 확인하세요!
+                            오늘 경기를 확인하세요!
                         </p>
                     </div>
                 </div>
                 <div>
                     <div class="splide__track">
                         <div class="splide__list">
-                            <div class="splide__slide px-3">
-                                <% 
-                                const now = new Date();
-                                const futureSchedules = allSchedule.filter(schedule => new Date(schedule.date) > now);
-                                const nextSchedule = futureSchedules.length ? futureSchedules.sort((a, b) => new Date(a.date) - new Date(b.date))[0] : null;
-                                %>
-                                <% if (nextSchedule) { %>
-                                    <div class="mb-3">
-                                        <a href="#" class="d-flex">
-                                            <div>
-                                                <img src="https://imgdb.net/storage/uploads/2b9f9d1a0de8a1a5ea2d236aa329e4a5bcab37311e987f44919d7dfe40f9aa01.png" class="rounded-sm me-3" width="70">
-                                            </div>
-                                            <div>
-                                                <!-- Format the date and time -->
-                                                <% const nextDate = new Date(nextSchedule.date); %>
-                                                <span class="color-highlight font-300 d-block pt-0 text-uppercase font-10">
-                                                    <%= `${nextDate.getMonth() + 1}월 ${nextDate.getDate()}일 - 01:00 PM` %>
-                                                </span>
-                                                
-                                                <% 
-                                                const nextTeam1 = allTeams.find(t => t._id.toString() === nextSchedule.team1.toString());
-                                                const nextTeam2 = allTeams.find(t => t._id.toString() === nextSchedule.team2.toString());
-                                                %>
-                                                
-                                                <strong class="color-theme font-16 d-block mt-n2">
-                                                    <!-- Show grade-class format -->
-                                                    <% if (nextTeam1 && nextTeam2) { %>
-                                                        <%= `${nextTeam1.grade}-${nextTeam1.class} vs ${nextTeam2.grade}-${nextTeam2.class}` %>
-                                                    <% } else { %>
-                                                        Team information not available
-                                                    <% } %>
-                                                </strong>
-                                                
-                                                <span class="font-11 d-block mb-n1 color-theme opacity-30">
-                                                    <i class="fa fa-map-marker pe-2"></i>
-                                                    구리고등학교 운동장
-                                                </span>
-                                            </div>
-                                        </a>
+                            <% if (todaySchedule.length === 0) { %>
+                                <div class="splide__slide px-3">
+                                    <div class="mb-3 text-center">
+                                        <p class="font-16 color-theme">오늘은 경기가 없습니다</p>
                                     </div>
-                                <% } %>
-                            </div>
+                                </div>
+                            <% } else { %>
+                                <% todaySchedule.forEach(schedule => { %>
+                                    <div class="splide__slide px-3">
+                                        <div class="mb-3">
+                                            <a href="#" class="d-flex">
+                                                <div>
+                                                    <img src="https://imgdb.net/storage/uploads/2b9f9d1a0de8a1a5ea2d236aa329e4a5bcab37311e987f44919d7dfe40f9aa01.png" class="rounded-sm me-3" width="70">
+                                                </div>
+                                                <div>
+                                                    <span class="color-highlight font-300 d-block pt-0 text-uppercase font-10">
+                                                        <%= new Date(schedule.date).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' }) %> - 
+                                                        <%= new Date(schedule.date).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: true }) %>
+                                                    </span>
+                    
+                                                    <strong class="color-theme font-16 d-block mt-n2">
+                                                        <%= schedule.team1.grade %>-<%= schedule.team1.class %> vs <%= schedule.team2.grade %>-<%= schedule.team2.class %>
+                                                    </strong>
+                                                                    
+                                                    <span class="font-11 d-block mb-n1 color-theme opacity-30">
+                                                        <i class="fa fa-map-marker pe-2"></i>
+                                                        구리고등학교 운동장
+                                                    </span>
+                                                </div>
+                                            </a>
+                                        </div>
+                                    </div>
+                                <% }); %>
+                            <% } %>
                         </div>
                     </div>
+                    
                 </div>
 
                 <div class="divider divider-margins"></div>
@@ -89,54 +81,39 @@
                 <!-- All Matches -->
                 <div class="d-flex px-3 pb-3">
                     <div class="align-self-center">
-                        <h4 class="mb-0">모든 경기</h4>
+                        <h4 class="mb-0">끝난 경기</h4>
                         <p class="mt-n1 mb-0">
                             다음 있을 경기들을 확인하세요!
                         </p>
                     </div>
                     <div class="align-self-center ms-auto">
-                        <a href="#" class="font-12">View All</a>
+                        <a href="#" class="font-12">모두 보기</a>
                     </div>
                 </div>
-                <% 
-                const remainingSchedules = allSchedule
-                    .filter(schedule => new Date(schedule.date) > now)
-                    .sort((a, b) => new Date(a.date) - new Date(b.date));
-                %>
-                <% remainingSchedules.forEach(schedule => { %>
+                <% allMatches.forEach(match => { %>
                     <div class="d-flex px-2 mb-3">
                         <div>
-                            <img src="https://imgdb.net/storage/uploads/2b9f9d1a0de8a1a5ea2d236aa329e4a5bcab37311e987f44919d7dfe40f9aa01.png" 
-                                 class="rounded-sm me-3 mt-3" width="55">
+                            <img src="https://imgdb.net/storage/uploads/7c4fcf3bd2b218eb9c3e9694040290e7f8a94d0ad89e32aa3ce6eb0760e17baf.png" 
+                                class="rounded-sm me-3 mt-3" width="55">
                         </div>
                         <div>
-                            <!-- Format the date and time -->
-                            <% const scheduleDate = new Date(schedule.date); %>
                             <span class="color-highlight font-300 d-block pt-2 text-uppercase font-10">
-                                <%= `${scheduleDate.getMonth() + 1}월 ${scheduleDate.getDate()}일 - 01:00 PM` %>
+                                <%= new Date(match.date).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' }) %> - 
+                                <%= new Date(match.date).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) %>
                             </span>
                             
-                            <% 
-                            const team1 = allTeams.find(t => t._id.toString() === schedule.team1.toString());
-                            const team2 = allTeams.find(t => t._id.toString() === schedule.team2.toString());
-                            %>
-                            
                             <strong class="color-theme font-16 d-block mt-n2">
-                                <!-- Show grade-class format -->
-                                <% if (team1 && team2) { %>
-                                    <%= `${team1.grade}-${team1.class} vs ${team2.grade}-${team2.class}` %>
-                                <% } else { %>
-                                    Team information not available
-                                <% } %>
+                                <%= match.score.team1 %> : <%= match.score.team2 %> 
+                                <span style="color: #75708579">(<%= match.team1.grade %>-<%= match.team1.class %> vs <%= match.team2.grade %>-<%= match.team2.class %>)</span>
                             </strong>
                             
                             <span class="font-11 d-block mb-n1">
-                                <i class="fa fa-map-marker pe-2"></i>
-                                구리고등학교 운동장
+                                <%= match.score.team1 > match.score.team2 ? `${match.team1.grade}학년 ${match.team1.class}반 승리` : 
+                                    match.score.team1 < match.score.team2 ? `${match.team2.grade}학년 ${match.team2.class}반 승리` : '무승부' %>
                             </span>
                         </div>
                         <div class="align-self-center ms-auto">
-                            <a href="#" data-menu="<%= schedule._id %>" class="btn btn-xs bg-blue-dark rounded-sm text-uppercase font-400">
+                            <a href="#" data-menu="<%= match._id %>" class="btn btn-xs bg-blue-dark rounded-sm text-uppercase font-400">
                                 자세히 보기
                             </a>
                         </div>
