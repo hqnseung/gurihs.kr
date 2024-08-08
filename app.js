@@ -268,10 +268,36 @@ app.get('/gugocup', async (req, res) => {
   renderTemplate(res, req, "gugocup.ejs", { user: req.user, todaySchedule, matches, allTeams, allMatches });
 });
 
-app.get('/board', async (req, res) => {
+app.get('/gugocup/match', async (req, res) => {
   if (!req.user) return res.redirect('/login');
   const id = req.query.id
 
+  if (id && id.match(/^[0-9a-fA-F]{24}$/) && await Match.findById(id)) {
+    const match = await Match.findById(id).populate('team1').populate('team2');
+    renderTemplate(res, req, "match.ejs", { match, user: req.user });
+  } else {
+    const allMatches = (await Match.find().populate('team1').populate('team2')).sort((a, b) => new Date(b.date) - new Date(a.date));
+    renderTemplate(res, req, "allMatch.ejs", { user: req.user, allMatches });
+  }
+});
+
+app.get('/gugocup/schedule', async (req, res) => {
+  if (!req.user) return res.redirect('/login');
+  const id = req.query.id
+
+  if (id && id.match(/^[0-9a-fA-F]{24}$/) && await Schedule.findById(id)) {
+    const schedule = await Schedule.findById(id);
+    renderTemplate(res, req, "schedule.ejs", { schedule, user: req.user });
+  } else {
+    const allSchedule = (await Schedule.find());
+    renderTemplate(res, req, "allSchedule.ejs", { user: req.user, allSchedule });
+  }
+});
+
+app.get('/board', async (req, res) => {                               
+  if (!req.user) return res.redirect('/login');                     
+  const id = req.query.id                                         
+                                                              
   if (id && id.match(/^[0-9a-fA-F]{24}$/) && await Post.findById(id)) {
     const post = await Post.findById(id);
     renderTemplate(res, req, "view.ejs", { post, user: req.user });
