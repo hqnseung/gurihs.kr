@@ -274,6 +274,7 @@ app.get('/gugocup/match', async (req, res) => {
 
   if (id && id.match(/^[0-9a-fA-F]{24}$/) && await Match.findById(id)) {
     const match = await Match.findById(id).populate('team1').populate('team2');
+
     renderTemplate(res, req, "match.ejs", { match, user: req.user });
   } else {
     const allMatches = (await Match.find().populate('team1').populate('team2')).sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -289,7 +290,8 @@ app.get('/gugocup/schedule', async (req, res) => {
     const schedule = await Schedule.findById(id);
     renderTemplate(res, req, "schedule.ejs", { schedule, user: req.user });
   } else {
-    const allSchedule = (await Schedule.find());
+    const today = new Date();
+    const allSchedule = (await  Schedule.find({ date: { $gt: today } }).sort({ date: 1 }));
     renderTemplate(res, req, "allSchedule.ejs", { user: req.user, allSchedule });
   }
 });
