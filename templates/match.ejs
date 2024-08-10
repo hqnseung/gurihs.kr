@@ -11,11 +11,12 @@
     </div>  
 
     <div class="header header-fixed header-logo-center">
-        <a href="index.html" class="header-title">GUGOCUP 2024</a>
-        <a href="/gugocup" class="header-icon header-icon-1"><i class="fas fa-arrow-left"></i></a>
+        <a href="/gugocup" class="header-title">GUGOCUP 2024</a>
     </div>
+
     <br><br>
-        <div class="card bg-18 rounded-0" data-card-height="350">
+    
+        <div class="card rounded-0" data-card-height="350" style="background-image: url('/gugocup/<%= match._id %>.png');">
             <div class="card-bottom m-3">
                 <span class="bg-highlight px-2 py-1 rounded-xs font-10 font-500">조별 경기</span>
                 <h1 class="color-white font-30 mt-1"><%= match.team1.grade %>학년 <%= match.team1.class %>반 vs <%= match.team2.grade %>학년 <%= match.team2.class %>반</h1>
@@ -45,76 +46,37 @@
                     %>
                     
                     <h4 class="mb-0"><%= eventTime %> - <%= teamDescription %> <%= eventTypeText %></h4>
-                    <p class="mb-3"><%= event.player %> 선수</p>
+                    <p class="mb-3"><%= teamDescription %> <%= event.player %> 선수</p>
                 <% }); %>
             </div>
         </div>
-        
-        <div class="card card-style">
-            <div class="content">
-                <h4 class="mb-0">경기 사진</h4>
-                <p>
-                    사진을 클릭해서 크게보거나 저장할수 있습니다.
-                </p>
-            </div>
-            <div class="divider mb-0"></div>
-            <div class="gallery-view-controls">
-                <a href="#" class="color-highlight gallery-view-1"><i class="fa fa-th"></i></a>
-                <a href="#" class="gallery-view-2"><i class="fa fa-th-large"></i></a>
-                <a href="#" class="gallery-view-3"><i class="fa fa-bars"></i></a>
-                <div class="clearfix"></div>
-            </div>
-            <div class="content my-n1">
-                <div class="gallery-views gallery-view-1">
-                    <a data-gallery="gallery-1" href="/app/images/pictures/10t.jpg" title="Vynil and Typerwritter">
-                        <img src="/app/images/empty.png" data-src="/app/images/pictures/10t.jpg" class="rounded-m preload-img shadow-l img-fluid" alt="img">
-                        <div class="caption"></div>
-                    </a>
-                    <a data-gallery="gallery-1" href="/app/images/pictures/11t.jpg" title="Fruit Cookie Pie">
-                        <img src="/app/images/empty.png" data-src="/app/images/pictures/11t.jpg" class="rounded-m preload-img shadow-l img-fluid" alt="img">
-                        <div class="caption"></div>
-                    </a>		
-                    <a data-gallery="gallery-1" href="/app/images/pictures/28t.jpg" title="Plain Cookies and Flour">
-                        <img src="/app/images/empty.png" data-src="/app/images/pictures/28t.jpg" class="rounded-m preload-img shadow-l img-fluid" alt="img">
-                        <div class="caption"></div>
-                    </a>	
-                    <a data-gallery="gallery-1" href="/app/images/pictures/18t.jpg" title="Pots and Stuff">
-                        <img src="/app/images/empty.png" data-src="/app/images/pictures/18t.jpg" class="rounded-m preload-img shadow-l img-fluid" alt="img">
-                        <div class="caption"></div>
-                    </a>
-                    <a data-gallery="gallery-1" href="/app/images/pictures/14t.jpg" title="Delicious Strawberries">
-                        <img src="/app/images/empty.png" data-src="/app/images/pictures/14t.jpg" class="rounded-m preload-img shadow-l img-fluid" alt="img">
-                        <div class="caption"></div>
-                    </a>
-                    <a data-gallery="gallery-1" href="/app/images/pictures/15t.jpg" title="A Beautiful Camera">
-                        <img src="/app/images/empty.png" data-src="/app/images/pictures/15t.jpg" class="rounded-m preload-img shadow-l img-fluid" alt="img">
-                        <div class="caption"></div>
-                    </a>
-                    <a data-gallery="gallery-1" href="/app/images/pictures/15t.jpg" title="A Beautiful Camera">
-                        <img src="/app/images/empty.png" data-src="/app/images/pictures/15t.jpg" class="rounded-m preload-img shadow-l img-fluid" alt="img">
-                        <div class="caption"></div>
-                    </a>		
-                    <a data-gallery="gallery-1" href="/app/images/pictures/15t.jpg" title="A Beautiful Camera">
-                        <img src="/app/images/empty.png" data-src="/app/images/pictures/15t.jpg" class="rounded-m preload-img shadow-l img-fluid" alt="img">
-                        <div class="caption"></div>
-                    </a>		
-                    <a data-gallery="gallery-1" href="/app/images/pictures/15t.jpg" title="A Beautiful Camera">
-                        <img src="/app/images/empty.png" data-src="/app/images/pictures/15t.jpg" class="rounded-m preload-img shadow-l img-fluid" alt="img">
-                        <div class="caption"></div>
-                    </a>	
-                    <a data-gallery="gallery-1" href="/app/images/pictures/15t.jpg" title="A Beautiful Camera">
-                        <img src="/app/images/empty.png" data-src="/app/images/pictures/15t.jpg" class="rounded-m preload-img shadow-l img-fluid" alt="img">
-                        <div class="caption"></div>
-                    </a>	
-                    <a data-gallery="gallery-1" href="/app/images/pictures/15t.jpg" title="A Beautiful Camera">
-                        <img src="/app/images/empty.png" data-src="/app/images/pictures/15t.jpg" class="rounded-m preload-img shadow-l img-fluid" alt="img">
-                        <div class="caption"></div>
-                    </a>				
+        <a href="/gugocup/team?id=<%= match.team1._id %>">
+            <div class="card card-style mb-3">
+                <div class="d-flex">
+                    <div class="ps-3 ms-2 align-self-center">
+                        <h1 class="pt-4 font-22"><%= match.team1.grade %>학년 <%= match.team1.class %>반</h1>
+                        <p class="font-11 mt-n2 mb-4"><%= match.team1.grade %>-<%= match.team1.class %>반의 페이지로 이동합니다.</p>
+                    </div>
+                    <div class="ms-auto me-4 align-self-center">
+                        <i class="fa-solid fa-school color-blue-dark fa-3x mt-4 mb-4 me-1"></i>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
-    <br><br><br><br>
+        </a>
+        <a href="/gugocup/team?id=<%= match.team2._id %>">
+            <div class="card card-style mb-3">
+                <div class="d-flex">
+                    <div class="ps-3 ms-2 align-self-center">
+                        <h1 class="pt-4 font-22"><%= match.team2.grade %>학년 <%= match.team2.class %>반</h1>
+                        <p class="font-11 mt-n2 mb-4"><%= match.team2.grade %>-<%= match.team2.class %>반의 페이지로 이동합니다.</p>
+                    </div>
+                    <div class="ms-auto me-4 align-self-center">
+                        <i class="fa-solid fa-school color-blue-dark fa-3x mt-4 mb-4 me-1"></i>
+                    </div>
+                </div>
+            </div>
+        </a>
+        <br><br><br>
     <!-- End of Page Content-->
 
     <!-- All Menus, Action Sheets, Modals, Notifications, Toasts, Snackbars get Placed outside the <div class="page-content"> -->

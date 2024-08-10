@@ -4,7 +4,7 @@ const Team = require('./models/Team');
 const Player = require('./models/Player');
 const Match = require('./models/Match');
 const Schedule = require('./models/Schedules');
-const Standing = require('./models/Standing');
+const Standing = require('./models/standing');
 
 const DATABASE_URL = process.env.DATABASE_URL;
 
@@ -12,127 +12,109 @@ const seedDatabase = async () => {
     try {
         await mongoose.connect(DATABASE_URL);
         console.log('Connected to DB');
+        // 기존 데이터 삭제
+        await Promise.all([
+            Match.deleteMany({}),
+            Player.deleteMany({}),
+            Schedule.deleteMany({}),
+            Standing.deleteMany({}),
+            Team.deleteMany({})
+        ]);
 
-        // Clear existing data
-        await Team.deleteMany({});
-        await Player.deleteMany({});
-        await Match.deleteMany({});
-        await Schedule.deleteMany({});
-        await Standing.deleteMany({});
-
-        // Define team data (16 teams, 4 groups)
-        const teamsData = [
-            { grade: 1, class: 1 },
-            { grade: 1, class: 2 },
-            { grade: 1, class: 3 },
-            { grade: 1, class: 4 },
-            { grade: 2, class: 1 },
-            { grade: 2, class: 2 },
-            { grade: 2, class: 3 },
-            { grade: 2, class: 4 },
-            { grade: 3, class: 1 },
-            { grade: 3, class: 2 },
-            { grade: 3, class: 3 },
-            { grade: 3, class: 4 },
-            { grade: 4, class: 1 },
-            { grade: 4, class: 2 },
-            { grade: 4, class: 3 },
-            { grade: 4, class: 4 }
-        ];
-
-        // Save teams and players
-        const savedTeams = [];
-        for (const teamData of teamsData) {
-            const players = [];
-            for (let i = 1; i <= 11; i++) {
-                players.push({
-                    name: `Player ${i} (Grade ${teamData.grade}, Class ${teamData.class})`,
-                    position: i === 1 ? 'Goalkeeper' : i <= 4 ? 'Defender' : i <= 7 ? 'Midfielder' : 'Forward',
-                    number: i
-                });
-            }
+        // 조 별 팀 생성
+        const teams = [];
+        for (let i = 1; i <= 16; i++) {
+            const grade = i <= 8 ? 1 : 2; // 1학년: 1~8, 2학년: 9~16
+            const classNum = (i - 1) % 8 + 1; // 1~8반
 
             const team = new Team({
-                grade: teamData.grade,
-                class: teamData.class,
-                players: players
+                grade: grade,
+                class: classNum,
+                players: [], // 플레이어는 나중에 추가
+                group: String.fromCharCode(65 + Math.floor((i - 1) / 4)) // A, B, C, D 그룹
             });
-            await team.save();
-            savedTeams.push(team);
+            teams.push(team);
+        }
+        await Promise.all(teams.map(team => team.save()));
 
-            for (const player of players) {
-                const playerDoc = new Player({
-                    name: player.name,
+        // 플레이어 데이터 생성
+        const players = [];
+        for (const team of teams) {
+            for (let i = 1; i <= 11; i++) { // 각 팀에 11명의 플레이어 생성
+                const player = new Player({
+                    name: `Player ${team.grade}-${team.class}-${i}`,
                     team: team._id,
-                    position: player.position,
-                    number: player.number
+                    position: ['Forward', 'Midfielder', 'Defender', 'Goalkeeper'][Math.floor(Math.random() * 4)],
+                    goals: Math.floor(Math.random() * 10),
+                    assists: Math.floor(Math.random() * 10),
+                    yellowCards: Math.floor(Math.random() * 3),
+                    redCards: Math.floor(Math.random() * 1)
                 });
-                await playerDoc.save();
+                players.push(player);
             }
         }
+        await Promise.all(players.map(player => player.save()));
 
-        // Define matches for each group (Group A, B, C, D)
-        const matchesData = [];
-        const groupSize = 4;
-        for (let i = 0; i < savedTeams.length; i += groupSize) {
-            const group = savedTeams.slice(i, i + groupSize);
-            for (let j = 0; j < group.length; j++) {
-                for (let k = j + 1; k < group.length; k++) {
-                    const match = {
-                        date: new Date(`2024-09-${i + j + k + 10}`), // Spread out match dates
-                        team1: group[j]._id,
-                        team2: group[k]._id,
-                        score: { team1: Math.floor(Math.random() * 5), team2: Math.floor(Math.random() * 5) },
-                        events: [
-                            { minute: 15, team: group[j]._id, player: `Player ${Math.floor(Math.random() * 10) + 1}`, eventType: 'goal' },
-                            { minute: 45, team: group[k]._id, player: `Player ${Math.floor(Math.random() * 10) + 1}`, eventType: 'goal' }
-                        ]
-                    };
-                    matchesData.push(match);
-                }
+        // Schedule 및 Match 데이터 생성
+        const schedules = [];
+        const matches = [];
+        let matchDate = new Date('2024-08-10'); // 시작 날짜 설정
+
+        // 팀 간 매치가 하루에 하나씩만 있도록 설정
+        for (let i = 0; i < teams.length; i++) {
+            for (let j = i + 1; j < teams.length; j++) {
+                if (matches.length >= 16) break; // 16경기까지만 생성
+                const schedule = new Schedule({
+                    date: matchDate, // 같은 날짜에 하나의 경기만 설정
+                    team1: teams[i]._id,
+                    team2: teams[j]._id
+                });
+                schedules.push(schedule);
+
+                const match = new Match({
+                    date: matchDate,
+                    team1: teams[i]._id,
+                    team2: teams[j]._id,
+                    score: { team1: Math.floor(Math.random() * 5), team2: Math.floor(Math.random() * 5) },
+                    events: [
+                        { minute: 15, team: teams[i]._id, player: players[i * 11]._id, eventType: 'goal' },
+                        { minute: 30, team: teams[j]._id, player: players[j * 11]._id, eventType: 'goal' }
+                    ]
+                });
+                matches.push(match);
+
+                // 다음 날짜로 이동
+                matchDate.setDate(matchDate.getDate() + 1);
             }
+            if (matches.length >= 16) break; // 16경기까지만 생성
         }
+        await Promise.all(schedules.map(schedule => schedule.save()));
+        await Promise.all(matches.map(match => match.save()));
 
-        // Save matches
-        for (const matchData of matchesData) {
-            const match = new Match(matchData);
-            await match.save();
-        }
-
-        // Define and save schedules
-        const schedulesData = matchesData.map(match => ({
-            date: match.date,
-            team1: match.team1,
-            team2: match.team2
-        }));
-
-        for (const scheduleData of schedulesData) {
-            const schedule = new Schedule(scheduleData);
-            await schedule.save();
-        }
-
-        // Define standings (dummy data, can be updated after all matches)
-        for (const team of savedTeams) {
+        // Standing 데이터 생성
+        const standings = [];
+        for (const team of teams) {
             const standing = new Standing({
                 team: team._id,
-                played: 0,
-                wins: 0,
-                draws: 0,
-                losses: 0,
-                goalsFor: 0,
-                goalsAgainst: 0,
-                points: 0
+                played: 1,
+                wins: Math.floor(Math.random() * 2),
+                draws: Math.floor(Math.random() * 2),
+                losses: 1 - Math.floor(Math.random() * 2),
+                goalsFor: Math.floor(Math.random() * 5),
+                goalsAgainst: Math.floor(Math.random() * 5),
+                points: Math.floor(Math.random() * 3) * (1 + Math.floor(Math.random() * 2))
             });
-            await standing.save();
+            standings.push(standing);
         }
+        await Promise.all(standings.map(standing => standing.save()));
 
-        console.log('Database seeded successfully');
+        console.log('Database seeded successfully!');
     } catch (error) {
-        console.error('Seeding error:', error);
+        console.error('Error seeding database:', error);
     } finally {
         mongoose.connection.close();
     }
 };
 
-// Run the seeding function
-seedDatabase().catch(error => console.error('Seeding error:', error));
+// 실행
+seedDatabase();

@@ -11,8 +11,7 @@
     </div>  
 
     <div class="header header-fixed header-logo-center">
-        <a href="index.html" class="header-title">GUGOCUP 2024</a>
-        <a href="/gugocup" class="header-icon header-icon-1"><i class="fas fa-arrow-left"></i></a>
+        <a href="/gugocup" class="header-title">GUGOCUP 2024</a>
     </div>
     
     <div class="page">
@@ -21,15 +20,64 @@
 
                 <br><br>
 
+                <div class="content mt-n1 mb-4">
+                    <div class="search-box bg-theme color-theme rounded-m shadow-l">
+                        <i class="fa fa-search"></i>
+                        <input type="text" class="border-0" placeholder="경기일정 검색" data-search>
+                        <a href="#" class="clear-search disabled mt-0"><i class="fa fa-times color-red-dark"></i></a>
+                    </div>   
+                    <div class="search-results disabled-search-list mt-3">
+                        <div class="card card-style mx-0 px-2 p-0 mb-0">
+                            <% allSchedule.forEach(schedule => { %>
+                                <a href="#" class="d-flex py-2" data-filter-item data-filter-name="<%= schedule.team1.grade %>-<%= schedule.team1.class %> <%= schedule.team1.grade %>학년 <%= schedule.team1.class %>반 <%= schedule.team2.grade %>-<%= schedule.team2.class %> <%= schedule.team2.grade %>학년 <%= schedule.team2.class %>반 <%= new Date(schedule.date).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' }) %>">
+                                    <div class="d-flex px-2 mb-3">
+                                        <div>
+                                            <img src="https://imgdb.net/storage/uploads/2b9f9d1a0de8a1a5ea2d236aa329e4a5bcab37311e987f44919d7dfe40f9aa01.png" 
+                                                class="rounded-sm me-3 mt-3" width="55">
+                                        </div>
+                                        <div>
+                                            <span class="color-highlight font-300 d-block pt-2 text-uppercase font-10">
+                                                <%= new Date(schedule.date).toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric' }) %> - 
+                                                <%= new Date(schedule.date).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) %>
+                                            </span>
+                                            
+                                            <strong class="color-theme font-16 d-block mt-n2">
+                                                <%= schedule.team1.grade %>-<%= schedule.team1.class %> vs <%= schedule.team2.grade %>-<%= schedule.team2.class %>
+                                            </strong>
+                                            
+                                            <span class="font-11 d-block mb-n1">
+                                                <i class="fa fa-map-marker pe-2"></i>
+                                                구리고등학교 운동장
+                                            </span>
+                                        </div>
+                                    </div>
+                                </a>
+                            <% }); %>
+                        </div>
+                    </div>
+                </div>	
+                <div class="search-no-results disabled mt-4">
+                    <div class="card card-style">
+                        <div class="content">
+                            <h2>검색결과를 찾을수 없습니다.</h2>
+                            <p>
+                                학년 반 혹은 날짜를 입력해주세요.<br>
+                                ex) 2학년 3반 / 2-3 / 8월 20일
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="divider divider-margins"></div>
                 <div class="d-flex px-3 pb-3">
                     <div class="align-self-center">
-                        <h4 class="mb-0">모든 경기 스케쥴</h4>
+                        <h4 class="mb-0">남은 모든 경기 스케쥴</h4>
                         <p class="mt-n1 mb-0">
                             남은 경기결과들을 확인하세요!
                         </p>
                     </div>
                 </div>
+                <% allSchedule.forEach(schedule => { %>
                     <div class="d-flex px-2 mb-3">
                         <div>
                             <img src="https://imgdb.net/storage/uploads/2b9f9d1a0de8a1a5ea2d236aa329e4a5bcab37311e987f44919d7dfe40f9aa01.png" 
@@ -37,11 +85,12 @@
                         </div>
                         <div>
                             <span class="color-highlight font-300 d-block pt-2 text-uppercase font-10">
-                                9월 27일 - 오전 01:00
+                                <%= new Date(schedule.date).toLocaleDateString('ko-KR', { month: 'numeric', day: 'numeric' }) %> - 
+                                <%= new Date(schedule.date).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) %>
                             </span>
                             
                             <strong class="color-theme font-16 d-block mt-n2">
-                                2-5 vs 3-2
+                                <%= schedule.team1.grade %>-<%= schedule.team1.class %> vs <%= schedule.team2.grade %>-<%= schedule.team2.class %>
                             </strong>
                             
                             <span class="font-11 d-block mb-n1">
@@ -50,6 +99,8 @@
                             </span>
                         </div>
                     </div>
+                    <% }) %>
+                    
 
                 <div class="divider divider-margins"></div>
                 <br><br><br><br>

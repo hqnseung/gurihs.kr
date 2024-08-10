@@ -9,7 +9,8 @@ const playerSchema = new mongoose.Schema({
 const teamSchema = new mongoose.Schema({
     grade: { type: Number, required: true },
     class: { type: Number, required: true },
-    players: [playerSchema]
+    players: [playerSchema],
+    group: { type: String, enum: ['A', 'B', 'C', 'D'], required: true }
 });
 
 const Team = mongoose.model('Team', teamSchema);
