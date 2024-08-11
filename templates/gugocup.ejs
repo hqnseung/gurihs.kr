@@ -123,6 +123,118 @@
 
                 <div class="divider divider-margins"></div>
 
+                <div class="d-flex px-3 pb-3">
+                    <div class="align-self-center">
+                        <h4 class="mb-0">조별 경기 현황</h4>
+                        <p class="mt-n1 mb-0">
+                            현재 조별경기 점수판을 확인하세요!
+                        </p>
+                    </div>
+                </div>
+                <div class="splide single-slider slider-no-arrows visible-slider slider-no-dots" id="single-slider-2">
+                    <div class="splide__track">
+                        <div class="splide__list">
+                            <!-- A조 -->
+                            <div class="splide__slide px-3">
+                                <div class="card card-style p-3 mx-0">
+                                    <a href="#" class="d-flex">
+                                        <div>
+                                            <img src="https://imgdb.net/storage/uploads/2b9f9d1a0de8a1a5ea2d236aa329e4a5bcab37311e987f44919d7dfe40f9aa01.png" class="rounded-sm me-3" width="50">
+                                        </div>
+                                        <div>
+                                            <p class="color-theme font-16 d-block mt-1 line-height-s">
+                                                <strong>A조<br>
+                                                    <span style="color: gray;">
+                                                        <% if (groupedStandings['A']) { %>
+                                                            <% groupedStandings['A'].forEach((standing, index) => { %>
+                                                                <span class="<%= index < 2 ? 'color-highlight' : '' %>">
+                                                                    <%= standing.team.grade %>학년 <%= standing.team.class %>반 (<%= standing.points %>)<br>
+                                                                </span>
+                                                            <% }); %>
+                                                        <% } %>
+                                                    </span>
+                                                </strong>
+                                            </p>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="card card-style p-3 mx-0">
+                                    <a href="#" class="d-flex">
+                                        <div>
+                                            <img src="https://imgdb.net/storage/uploads/2b9f9d1a0de8a1a5ea2d236aa329e4a5bcab37311e987f44919d7dfe40f9aa01.png" class="rounded-sm me-3" width="50">
+                                        </div>
+                                        <div>
+                                            <p class="color-theme font-16 d-block mt-1 line-height-s">
+                                                <strong>B조<br>
+                                                    <span style="color: gray;">
+                                                        <% if (groupedStandings['B']) { %>
+                                                            <% groupedStandings['B'].forEach((standing, index) => { %>
+                                                                <span class="<%= index < 2 ? 'color-highlight' : '' %>">
+                                                                    <%= standing.team.grade %>학년 <%= standing.team.class %>반 (<%= standing.points %>)<br>
+                                                                </span>
+                                                            <% }); %>
+                                                        <% } %>
+                                                    </span>
+                                                </strong>
+                                            </p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="splide__slide px-3">
+                                <div class="card card-style p-3 mx-0">
+                                    <a href="#" class="d-flex">
+                                        <div>
+                                            <img src="https://imgdb.net/storage/uploads/2b9f9d1a0de8a1a5ea2d236aa329e4a5bcab37311e987f44919d7dfe40f9aa01.png" class="rounded-sm me-3" width="50">
+                                        </div>
+                                        <div>
+                                            <p class="color-theme font-16 d-block mt-1 line-height-s">
+                                                <strong>C조<br>
+                                                    <span style="color: gray;">
+                                                        <% if (groupedStandings['C']) { %>
+                                                            <% groupedStandings['C'].forEach((standing, index) => { %>
+                                                                <span class="<%= index < 2 ? 'color-highlight' : '' %>">
+                                                                    <%= standing.team.grade %>학년 <%= standing.team.class %>반 (<%= standing.points %>)<br>
+                                                                </span>
+                                                            <% }); %>
+                                                        <% } %>
+                                                    </span>
+                                                </strong>
+                                            </p>
+                                        </div>
+                                    </a>
+                                </div>
+                                <div class="card card-style p-3 mx-0">
+                                    <a href="#" class="d-flex">
+                                        <div>
+                                            <img src="https://imgdb.net/storage/uploads/2b9f9d1a0de8a1a5ea2d236aa329e4a5bcab37311e987f44919d7dfe40f9aa01.png" class="rounded-sm me-3" width="50">
+                                        </div>
+                                        <div>
+                                            <p class="color-theme font-16 d-block mt-1 line-height-s">
+                                                <strong>D조<br>
+                                                    <span style="color: gray;">
+                                                        <% if (groupedStandings['D']) { %>
+                                                            <% groupedStandings['D'].forEach((standing, index) => { %>
+                                                                <span class="<%= index < 2 ? 'color-highlight' : '' %>">
+                                                                    <%= standing.team.grade %>학년 <%= standing.team.class %>반 (<%= standing.points %>)<br>
+                                                                </span>
+                                                            <% }); %>
+                                                        <% } %>
+                                                    </span>
+                                                </strong>
+                                            </p>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                
+
+                <div class="divider divider-margins"></div>
+
                 <div class="d-flex px-3">
                     <div class="align-self-center">
                         <h4 class="mb-0">선수</h4>

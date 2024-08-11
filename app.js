@@ -26,6 +26,7 @@ const Match = require('./models/Match');
 const Team = require('./models/Team');
 const Player = require('./models/Player');
 const Standing = require('./models/standing');
+mongoose.set('strictPopulate', false);
 
 const app = express();
 const dataDir = path.resolve(`${process.cwd()}${path.sep}`);
@@ -265,10 +266,29 @@ app.get('/gugocup', async (req, res) => {
   })
   
   const matches = await Match.find();
-  const allTeams = await Team.find();
+  const allTeams = await Team.find().populate('standing');
+
+  const standings = await Standing.find()
+  .populate('team')
+  .exec();
+
+  const groupedStandings = standings.reduce((acc, standing) => {
+    const group = standing.team.group;
+    if (!acc[group]) {
+        acc[group] = [];
+    }
+    acc[group].push(standing);
+    return acc;
+  }, {});
+
+  for (const group in groupedStandings) {
+      groupedStandings[group].sort((a, b) => b.points - a.points);
+  }
+
   const allPlayers = await Player.find().sort({ goals: -1 }).limit(5).populate('team');  
   const allMatches = (await Match.find().populate('team1').populate('team2')).sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 3);
-  renderTemplate(res, req, "gugocup.ejs", { user: req.user, todaySchedule, matches, allTeams, allMatches, allPlayers });
+  
+  renderTemplate(res, req, "gugocup.ejs", { user: req.user, todaySchedule, matches, allTeams, allMatches, allPlayers, groupedStandings });
 });
 
 app.get('/gugocup/team', async (req, res) => {
@@ -279,7 +299,22 @@ app.get('/gugocup/team', async (req, res) => {
     const team = await Team.findById(id)
     const standing = await Standing.findOne({ team: id })
 
-    renderTemplate(res, req, "team.ejs", { team, standing, user: req.user });
+    const group = team.group;
+    const teamIds = (await Team.find({ group }).select('_id')).map(t => t._id);
+    const standings = await Standing.find({ team: { $in: teamIds } })
+        .populate('team')
+        .sort({ points: -1 })
+        .exec();
+    const rank = standings.findIndex(standing => standing.team._id.toString() === id) + 1;
+
+    const matches = await Match.find({
+      $or: [{ team1: id }, { team2: id }]
+    })
+    .populate('team1')
+    .populate('team2')
+    .exec();
+
+    renderTemplate(res, req, "team.ejs", { team, standing, user: req.user, rank, matches });
   } else {
     const allTeam = await Team.find()
     renderTemplate(res, req, "allTeam.ejs", { user: req.user, allTeam });
