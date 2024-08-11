@@ -143,17 +143,16 @@
                                         </div>
                                         <div>
                                             <p class="color-theme font-16 d-block mt-1 line-height-s">
-                                                <strong>A조<br>
-                                                    <span style="color: gray;">
-                                                        <% if (groupedStandings['A']) { %>
-                                                            <% groupedStandings['A'].forEach((standing, index) => { %>
-                                                                <span class="<%= index < 2 ? 'color-highlight' : '' %>">
-                                                                    <%= standing.team.grade %>학년 <%= standing.team.class %>반 (<%= standing.points %>)<br>
-                                                                </span>
-                                                            <% }); %>
-                                                        <% } %>
-                                                    </span>
-                                                </strong>
+                                                <strong>A조</strong><br>
+                                                <span style="color: gray;">
+                                                    <% if (groupedStandings['A']) { %>
+                                                        <% groupedStandings['A'].forEach((standing, index) => { %>
+                                                            <span style="<%= index < 2 ? 'font-weight: bold' : '' %>" class="<%= index < 2 ? 'color-highlight' : '' %>">
+                                                                <%= standing.team.grade %>학년 <%= standing.team.class %>반 (<%= standing.points %>)<br>
+                                                            </span>
+                                                        <% }); %>
+                                                    <% } %>
+                                                </span>
                                             </p>
                                         </div>
                                     </a>
@@ -165,17 +164,16 @@
                                         </div>
                                         <div>
                                             <p class="color-theme font-16 d-block mt-1 line-height-s">
-                                                <strong>B조<br>
-                                                    <span style="color: gray;">
-                                                        <% if (groupedStandings['B']) { %>
-                                                            <% groupedStandings['B'].forEach((standing, index) => { %>
-                                                                <span class="<%= index < 2 ? 'color-highlight' : '' %>">
-                                                                    <%= standing.team.grade %>학년 <%= standing.team.class %>반 (<%= standing.points %>)<br>
-                                                                </span>
-                                                            <% }); %>
-                                                        <% } %>
-                                                    </span>
-                                                </strong>
+                                                <strong>B조</strong><br>
+                                                <span style="color: gray;">
+                                                    <% if (groupedStandings['B']) { %>
+                                                        <% groupedStandings['B'].forEach((standing, index) => { %>
+                                                            <span style="<%= index < 2 ? 'font-weight: bold' : '' %>" class="<%= index < 2 ? 'color-highlight' : '' %>">
+                                                                <%= standing.team.grade %>학년 <%= standing.team.class %>반 (<%= standing.points %>)<br>
+                                                            </span>
+                                                        <% }); %>
+                                                    <% } %>
+                                                </span>
                                             </p>
                                         </div>
                                     </a>
@@ -189,17 +187,16 @@
                                         </div>
                                         <div>
                                             <p class="color-theme font-16 d-block mt-1 line-height-s">
-                                                <strong>C조<br>
-                                                    <span style="color: gray;">
-                                                        <% if (groupedStandings['C']) { %>
-                                                            <% groupedStandings['C'].forEach((standing, index) => { %>
-                                                                <span class="<%= index < 2 ? 'color-highlight' : '' %>">
-                                                                    <%= standing.team.grade %>학년 <%= standing.team.class %>반 (<%= standing.points %>)<br>
-                                                                </span>
-                                                            <% }); %>
-                                                        <% } %>
-                                                    </span>
-                                                </strong>
+                                                <strong>C조</strong><br>
+                                                <span style="color: gray;">
+                                                    <% if (groupedStandings['C']) { %>
+                                                        <% groupedStandings['C'].forEach((standing, index) => { %>
+                                                            <span style="<%= index < 2 ? 'font-weight: bold' : '' %>" class="<%= index < 2 ? 'color-highlight' : '' %>">
+                                                                <%= standing.team.grade %>학년 <%= standing.team.class %>반 (<%= standing.points %>)<br>
+                                                            </span>
+                                                        <% }); %>
+                                                    <% } %>
+                                                </span>
                                             </p>
                                         </div>
                                     </a>
@@ -211,17 +208,16 @@
                                         </div>
                                         <div>
                                             <p class="color-theme font-16 d-block mt-1 line-height-s">
-                                                <strong>D조<br>
-                                                    <span style="color: gray;">
-                                                        <% if (groupedStandings['D']) { %>
-                                                            <% groupedStandings['D'].forEach((standing, index) => { %>
-                                                                <span class="<%= index < 2 ? 'color-highlight' : '' %>">
-                                                                    <%= standing.team.grade %>학년 <%= standing.team.class %>반 (<%= standing.points %>)<br>
-                                                                </span>
-                                                            <% }); %>
-                                                        <% } %>
-                                                    </span>
-                                                </strong>
+                                                <strong>D조</strong><br>
+                                                <span style="color: gray;">
+                                                    <% if (groupedStandings['D']) { %>
+                                                        <% groupedStandings['D'].forEach((standing, index) => { %>
+                                                            <span style="<%= index < 2 ? 'font-weight: bold' : '' %>" class="<%= index < 2 ? 'color-highlight' : '' %>">
+                                                                <%= standing.team.grade %>학년 <%= standing.team.class %>반 (<%= standing.points %>)<br>
+                                                            </span>
+                                                        <% }); %>
+                                                    <% } %>
+                                                </span>
                                             </p>
                                         </div>
                                     </a>
