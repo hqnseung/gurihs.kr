@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Match</title>
+</head>
+<body>
+    <h1>Create New Match</h1>
+
+    <form action="/matches" method="POST">
+        <label for="team1">Team 1:</label>
+        <select id="team1" name="team1" required>
+            <option value="">Select Team 1</option>
+            <% teams.forEach(function(team) { %>
+                <option value="<%= team._id %>"><%= team.grade %>학년 <%= team.class %>반 (<%= team.group %>조)</option>
+            <% }); %>
+        </select>
+
+        <label for="team2">Team 2:</label>
+        <select id="team2" name="team2" required>
+            <option value="">Select Team 2</option>
+            <% teams.forEach(function(team) { %>
+                <option value="<%= team._id %>"><%= team.grade %>학년 <%= team.class %>반 (<%= team.group %>조)</option>
+            <% }); %>
+        </select>
+
+        <label for="date">Match Date:</label>
+        <input type="date" id="date" name="date" required>
+
+        <label for="score1">Score Team 1:</label>
+        <input type="number" id="score1" name="score1" required min="0">
+        
+        <label for="score2">Score Team 2:</label>
+        <input type="number" id="score2" name="score2" required min="0">
+        
+
+        <h2>Match Events</h2>
+
+        <div id="events">
+            <div class="event">
+                <label for="minute">Minute:</label>
+                <input type="number" id="minute" name="events[0][minute]" required min="0">
+
+                <label for="eventTeam0">Team:</label>
+                <select id="eventTeam0" name="events[0][team]" required onchange="loadPlayers('eventTeam0', 'eventPlayer0')">
+                    <option value="">Select Team</option>
+                    <% teams.forEach(function(team) { %>
+                        <option value="<%= team._id %>"><%= team.grade %>학년 <%= team.class %>반 (<%= team.group %>조)</option>
+                    <% }); %>
+                </select>
+
+                <label for="eventPlayer0">Player:</label>
+                <select id="eventPlayer0" name="events[0][player]" required>
+                    <option value="">Select Player</option>
+                </select>
+
+                <label for="eventType">Event Type:</label>
+                <select id="eventType" name="events[0][eventType]" required>
+                    <option value="goal">Goal</option>
+                    <option value="yellow card">Yellow Card</option>
+                    <option value="red card">Red Card</option>
+                </select>
+            </div>
+        </div>
+
+        <button type="button" onclick="addEvent()">Add Another Event</button>
+        <button type="submit">Create Match</button>
+    </form>
+
+    <script>
+        let eventCount = 1;
+
+        async function loadPlayers(teamSelectId, playerSelectId) {
+            const teamSelect = document.getElementById(teamSelectId);
+            const playerSelect = document.getElementById(playerSelectId);
+
+            const teamId = teamSelect.value;
+            if (!teamId) {
+                playerSelect.innerHTML = '<option value="">Select Player</option>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`/teams/${teamId}/players`);
+                const players = await response.json();
+
+                playerSelect.innerHTML = '<option value="">Select Player</option>';
+                players.forEach(player => {
+                    const option = document.createElement('option');
+                    option.value = player._id;
+                    option.textContent = `${player.name} (${player.position})`;
+                    playerSelect.appendChild(option);
+                });
+            } catch (error) {
+                console.error('Failed to load players:', error);
+            }
+        }
+
+        function addEvent() {
+            const eventDiv = document.createElement('div');
+            eventDiv.className = 'event';
+
+            eventDiv.innerHTML = `
+                <label for="minute">Minute:</label>
+                <input type="number" id="minute" name="events[${eventCount}][minute]" required min="0">
+
+                <label for="eventTeam${eventCount}">Team:</label>
+                <select id="eventTeam${eventCount}" name="events[${eventCount}][team]" required onchange="loadPlayers('eventTeam${eventCount}', 'eventPlayer${eventCount}')">
+                    <option value="">Select Team</option>
+                    <% teams.forEach(function(team) { %>
+                        <option value="<%= team._id %>">Grade <%= team.grade %>, Class <%= team.class %> (Group <%= team.group %>)</option>
+                    <% }); %>
+                </select>
+
+                <label for="eventPlayer${eventCount}">Player:</label>
+                <select id="eventPlayer${eventCount}" name="events[${eventCount}][player]" required>
+                    <option value="">Select Player</option>
+                </select>
+
+                <label for="eventType">Event Type:</label>
+                <select id="eventType" name="events[${eventCount}][eventType]" required>
+                    <option value="goal">Goal</option>
+                    <option value="yellow card">Yellow Card</option>
+                    <option value="red card">Red Card</option>
+                </select>
+            `;
+
+            document.getElementById('events').appendChild(eventDiv);
+            eventCount++;
+        }
+    </script>
+</body>
+</html>

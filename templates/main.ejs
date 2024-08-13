@@ -28,7 +28,7 @@
             <div class="splide__track">
                 <div class="splide__list">
                     <div class="splide__slide">
-                        <a href="/board?id=" class="card me-0 card-style" data-card-height="300" style="background-image: url('/app/images/목업.png')">
+                        <a href="/board?id=66b8c828f8bac189760dd6e2" class="card me-0 card-style" data-card-height="300" style="background-image: url('/app/images/목업.png')">
                             <div class="card-top">
                                 <span class="badge float-end bg-blue-dark p-2 text-uppercase rounded-s m-2">학생자치회</span>
                             </div>
@@ -61,7 +61,7 @@
         </div>
 
         <div class="card card-style">
-            <div class="content">
+            <div class="content line-height-m">
                 <h4><%= date %> 구리고 급식</h4>
                 <p><%- lunch %></p>
             </div>
@@ -118,18 +118,12 @@
 
         <div class="footer card card-style">
             <a href="#" class="footer-title"><span class="color-highlight" style="font-size: 0.9em;">구리고등학교</span></a>
-            <p class="footer-text"><span style="color: black;"><b>꿈을 품고 웅비하여 열매 맺는 九高人</b></span><br><br>이 어플은 38대 학생자치회를 위해 개발되었으며,<br>다음 39대 학생자치회에게 물려줄 의향이 있습니다.</p>
+            <p class="footer-text line-height-s"><span style="color: black;"><b>꿈을 품고 웅비하여 열매 맺는 九高人</b></span></p>
             <div class="text-center mb-3">
-                <a href="#" id="instagram" class="icon icon-xs rounded-sm shadow-l me-1 bg-instagram"><i class="fab fa-instagram"></i></a>
+                <a href="#" onclick="swingWebViewPlugin.app.methods.doExternalOpen('https://www.instagram.com/guri_hs_official/');" class="icon icon-xs rounded-sm shadow-l me-1 bg-instagram"><i class="fab fa-instagram"></i></a>
                 <a href="#" class="icon icon-xs rounded-sm me-1 shadow-l bg-blue-dark"><i class="fa fa-share-alt"></i></a>
                 <a href="#" class="back-to-top icon icon-xs rounded-sm shadow-l bg-dark-light"><i class="fa fa-angle-up"></i></a>
             </div>
-
-            <script>
-                document.getElementById('instagram').addEventListener('click', function(event) {
-                    swingWebViewPlugin.app.methods.doExternalOpen('https://www.instagram.com/guri_hs_official/');
-                });
-            </script>
 
             <p class="footer-copyright">Copyright &copy; 한승우 <span id="copyright-year">2024</span>. All Rights Reserved.</p>
             <div class="clear"></div>

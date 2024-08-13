@@ -42,26 +42,40 @@
                 
             </div>
         </div>
-        <% matches.forEach(match => { %>
-            <a href="/gugocup/match?id=<%= match._id %>">
-                <div class="card card-style mb-3">
-                    <div class="d-flex">
-                        <div class="ps-3 ms-2 align-self-center">
-                            <h1 class="pt-4 font-22">
-                                <%= match.team1.grade %>-<%= match.team1.class %> vs <%= match.team2.grade %>-<%= match.team2.class %> 
-                                <span style="color: #75708579">
-                                    (<%= match.score.team1 %>:<%= match.score.team2 %>)
-                                </span>
-                            </h1>
-                            <p class="font-11 mt-n2 mb-4">참여한 경기 페이지로 이동합니다.</p>
-                        </div>
-                        <div class="ms-auto me-4 align-self-center">
-                            <i class="fa fa-futbol color-blue-dark fa-3x mt-4 mb-4 me-1"></i>
-                        </div>
-                    </div>
+
+        <div class="card card-style">
+            <div class="content mb-2">
+                <h3>선수 정보</h3>
+
+                <div class="list-group list-custom-small">
+                    <% players.forEach(player => { %>
+                        <a href="/gugocup/player?id=<%= player._id %>">
+                            <i class="fa font-14 fa-sharp fa-solid fa-shirt color-blue-dark"></i>
+                            <span><%= player.name %> [ <%= player.position %> ]</span>
+                            <i class="fa fa-angle-right"></i>
+                        </a>
+                    <% }); %>           
                 </div>
-            </a>
-        <% }); %>
+            </div>  
+        </div>     
+        
+        <div class="card card-style">
+            <div class="content mb-2">
+                <h3>역대경기 정보</h3>
+
+                <div class="list-group list-custom-small">
+                    <% matches.forEach(match => { %>
+                        <a href="/gugocup/match?id=<%= match._id %>">
+                            <i class="fa font-14 fa-futbol  color-blue-dark"></i>
+                            <span><%= match.team1.grade %>-<%= match.team1.class %> vs <%= match.team2.grade %>-<%= match.team2.class %>                                <span style="color: #75708579">
+                                (<%= match.score.team1 %>:<%= match.score.team2 %>)
+                            </span></span>
+                            <i class="fa fa-angle-right"></i>
+                        </a>
+                    <% }); %>           
+                </div>
+            </div>  
+        </div>   
 
         <br><br><br>
     <!-- End of Page Content-->

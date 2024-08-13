@@ -16,7 +16,7 @@
 
     <br><br>
     
-        <div class="card rounded-0" data-card-height="350" style="background-image: url('/gugocup/<%= match._id %>.png');">
+        <div class="card rounded-0" data-card-height="350" style="background-image: url('/gugocup/background.png');">
             <div class="card-bottom m-3">
                 <span class="bg-highlight px-2 py-1 rounded-xs font-10 font-500">조별 경기</span>
                 <h1 class="color-white font-30 mt-1"><%= match.team1.grade %>학년 <%= match.team1.class %>반 vs <%= match.team2.grade %>학년 <%= match.team2.class %>반</h1>
@@ -34,18 +34,13 @@
                 
                 <% match.events.forEach(event => { %>
                     <% 
-                        // 시간을 계산하기 위해 이벤트의 minute을 사용
-                        const eventTime = new Date(match.date).getHours() + ':' + 
-                                          String(new Date(match.date).getMinutes() + event.minute).padStart(2, '0');
-                        
-                        // 이벤트가 발생한 팀의 이름을 결정
                         const team = event.team.equals(match.team1._id) ? match.team1 : match.team2;
                         const teamDescription = `${team.grade}학년 ${team.class}반`;
                         const eventTypeText = event.eventType === 'goal' ? '득점' : 
                                               (event.eventType === 'yellow card' ? '경고' : '퇴장');
                     %>
                     
-                    <h4 class="mb-0"><%= eventTime %> - <%= teamDescription %> <%= eventTypeText %></h4>
+                    <h4 class="mb-0"><%= event.minute %>분 - <%= teamDescription %> <%= eventTypeText %></h4>
                     <p class="mb-3"><%= teamDescription %> <%= event.player %> 선수</p>
                 <% }); %>
             </div>

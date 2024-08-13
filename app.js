@@ -243,6 +243,157 @@ app.post('/post', async (req, res) => {
   }
 });
 
+app.get('/matches/new', async (req, res) => {
+  if (!req.user) return res.redirect('/login'); 
+
+  const userId = req.user.email.split('@')[0];
+  const user = await User.findOne({ id: userId });
+
+  if (user.role !== "admin") return renderTemplate(res, req, "403.ejs")
+
+  const teams = await Team.find();
+  renderTemplate(res, req, "matchPost.ejs", { teams });
+});
+
+app.post('/matches', async (req, res) => {
+  if (!req.user) return res.status(400).json({ message: 'Error occurred while processing data' });
+  try {
+    const { date, team1, team2, score1, score2, events } = req.body;
+
+    const scoreTeam1 = parseInt(score1, 10);
+    const scoreTeam2 = parseInt(score2, 10);
+
+    if (isNaN(scoreTeam1) || isNaN(scoreTeam2)) {
+        return res.status(400).send('Invalid score values');
+    }
+
+    const match = new Match({
+        date,
+        team1,
+        team2,
+        score: { team1: scoreTeam1, team2: scoreTeam2 },
+        events
+    });
+
+    await match.save();
+
+    const [team1Standing, team2Standing] = await Promise.all([
+        Standing.findOne({ team: team1 }),
+        Standing.findOne({ team: team2 })
+    ]);
+
+    if (!team1Standing || !team2Standing) {
+        return res.status(404).send('One or both teams not found in standings');
+    }
+
+    if (scoreTeam1 > scoreTeam2) {
+        team1Standing.wins += 1;
+        team2Standing.losses += 1;
+    } else if (scoreTeam1 < scoreTeam2) {
+        team1Standing.losses += 1;
+        team2Standing.wins += 1;
+    } else {
+        team1Standing.draws += 1;
+        team2Standing.draws += 1;
+    }
+
+    team1Standing.played += 1;
+    team2Standing.played += 1;
+    team1Standing.goalsFor += scoreTeam1;
+    team1Standing.goalsAgainst += scoreTeam2;
+    team2Standing.goalsFor += scoreTeam2;
+    team2Standing.goalsAgainst += scoreTeam1;
+
+    team1Standing.points = team1Standing.wins * 3 + team1Standing.draws;
+    team2Standing.points = team2Standing.wins * 3 + team2Standing.draws;
+
+    await Promise.all([
+        team1Standing.save(),
+        team2Standing.save()
+    ]);
+
+    for (const event of events) {
+        const { minute, team, player, eventType } = event;
+        const playerDoc = await Player.findById(player);
+
+        if (playerDoc) {
+            if (eventType === 'goal') {
+                playerDoc.goals += 1;
+            } else if (eventType === 'yellow card') {
+                playerDoc.yellowCards += 1;
+            } else if (eventType === 'red card') {
+                playerDoc.redCards += 1;
+            }
+            await playerDoc.save();
+        }
+    }
+
+    res.redirect('/gugocup');
+  } catch (err) {
+      console.error(err);
+      res.status(500).send('Internal Server Error');
+  }
+});
+
+app.get('/teams/:teamId/players', async (req, res) => {
+  try {
+      const players = await Player.find({ team: req.params.teamId });
+      res.json(players);
+  } catch (err) {
+      console.error(err);
+      res.status(500).send('Server Error');
+  }
+});
+
+async function updateStandings(team1Standing, team2Standing, scoreTeam1, scoreTeam2) {
+  team1Standing.played += 1;
+  team2Standing.played += 1;
+
+  team1Standing.goalsFor += scoreTeam1;
+  team1Standing.goalsAgainst += scoreTeam2;
+  team2Standing.goalsFor += scoreTeam2;
+  team2Standing.goalsAgainst += scoreTeam1;
+
+  if (scoreTeam1 > scoreTeam2) {
+      team1Standing.wins += 1;
+      team1Standing.points += 3;
+      team2Standing.losses += 1;
+  } else if (scoreTeam1 < scoreTeam2) {
+      team2Standing.wins += 1;
+      team2Standing.points += 3;
+      team1Standing.losses += 1;
+  } else {
+      team1Standing.draws += 1;
+      team2Standing.draws += 1;
+      team1Standing.points += 1;
+      team2Standing.points += 1;
+  }
+
+  await team1Standing.save();
+  await team2Standing.save();
+}
+
+async function updatePlayerStats(events) {
+  for (const event of events) {
+      const player = await Player.findOne({ name: event.player, team: event.team });
+      if (!player) continue;
+
+      switch (event.eventType) {
+          case 'goal':
+              player.goals += 1;
+              break;
+          case 'yellow card':
+              player.yellowCards += 1;
+              break;
+          case 'red card':
+              player.redCards += 1;
+              break;
+      }
+
+      await player.save();
+  }
+}
+
 app.get('/gugocup', async (req, res) => {
   if (!req.user) return res.redirect('/login'); 
 
@@ -314,7 +465,9 @@ app.get('/gugocup/team', async (req, res) => {
     .populate('team2')
     .exec();
 
-    renderTemplate(res, req, "team.ejs", { team, standing, user: req.user, rank, matches });
+    const players = await Player.find({ team: id });
+
+    renderTemplate(res, req, "team.ejs", { team, standing, user: req.user, rank, matches, players });
   } else {
     const allTeam = await Team.find()
     renderTemplate(res, req, "allTeam.ejs", { user: req.user, allTeam });

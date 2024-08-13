@@ -12,7 +12,6 @@ const seedDatabase = async () => {
     try {
         await mongoose.connect(DATABASE_URL);
         console.log('Connected to DB');
-        // 기존 데이터 삭제
         await Promise.all([
             Match.deleteMany({}),
             Player.deleteMany({}),
@@ -21,92 +20,237 @@ const seedDatabase = async () => {
             Team.deleteMany({})
         ]);
 
-        // 조 별 팀 생성
-        const teams = [];
-        for (let i = 1; i <= 16; i++) {
-            const grade = i <= 8 ? 1 : 2; // 1학년: 1~8, 2학년: 9~16
-            const classNum = (i - 1) % 8 + 1; // 1~8반
+        const teamsData = [
+            {
+                grade: 1,
+                class: 1,
+                group: 'A',
+                players: [
+                    { name: 'Player1-1', position: 'Forward', number: 9 },
+                    { name: 'Player1-2', position: 'Midfielder', number: 10 },
+                    { name: 'Player1-3', position: 'Defender', number: 4 },
+                    { name: 'Player1-4', position: 'Goalkeeper', number: 1 }
+                ]
+            },
+            {
+                grade: 1,
+                class: 2,
+                group: 'A',
+                players: [
+                    { name: 'Player2-1', position: 'Forward', number: 7 },
+                    { name: 'Player2-2', position: 'Midfielder', number: 8 },
+                    { name: 'Player2-3', position: 'Defender', number: 5 },
+                    { name: 'Player2-4', position: 'Goalkeeper', number: 1 }
+                ]
+            },
+            {
+                grade: 2,
+                class: 1,
+                group: 'B',
+                players: [
+                    { name: 'Player3-1', position: 'Forward', number: 11 },
+                    { name: 'Player3-2', position: 'Midfielder', number: 6 },
+                    { name: 'Player3-3', position: 'Defender', number: 3 },
+                    { name: 'Player3-4', position: 'Goalkeeper', number: 1 }
+                ]
+            },
+            {
+                grade: 2,
+                class: 2,
+                group: 'B',
+                players: [
+                    { name: 'Player4-1', position: 'Forward', number: 10 },
+                    { name: 'Player4-2', position: 'Midfielder', number: 8 },
+                    { name: 'Player4-3', position: 'Defender', number: 4 },
+                    { name: 'Player4-4', position: 'Goalkeeper', number: 1 }
+                ]
+            },
+            {
+                grade: 3,
+                class: 1,
+                group: 'C',
+                players: [
+                    { name: 'Player5-1', position: 'Forward', number: 9 },
+                    { name: 'Player5-2', position: 'Midfielder', number: 7 },
+                    { name: 'Player5-3', position: 'Defender', number: 5 },
+                    { name: 'Player5-4', position: 'Goalkeeper', number: 1 }
+                ]
+            },
+            {
+                grade: 3,
+                class: 2,
+                group: 'C',
+                players: [
+                    { name: 'Player6-1', position: 'Forward', number: 11 },
+                    { name: 'Player6-2', position: 'Midfielder', number: 6 },
+                    { name: 'Player6-3', position: 'Defender', number: 4 },
+                    { name: 'Player6-4', position: 'Goalkeeper', number: 1 }
+                ]
+            },
+            {
+                grade: 4,
+                class: 1,
+                group: 'D',
+                players: [
+                    { name: 'Player7-1', position: 'Forward', number: 10 },
+                    { name: 'Player7-2', position: 'Midfielder', number: 8 },
+                    { name: 'Player7-3', position: 'Defender', number: 5 },
+                    { name: 'Player7-4', position: 'Goalkeeper', number: 1 }
+                ]
+            },
+            {
+                grade: 4,
+                class: 2,
+                group: 'D',
+                players: [
+                    { name: 'Player8-1', position: 'Forward', number: 7 },
+                    { name: 'Player8-2', position: 'Midfielder', number: 6 },
+                    { name: 'Player8-3', position: 'Defender', number: 3 },
+                    { name: 'Player8-4', position: 'Goalkeeper', number: 1 }
+                ]
+            },
+            {
+                grade: 5,
+                class: 1,
+                group: 'A',
+                players: [
+                    { name: 'Player1-1', position: 'Forward', number: 9 },
+                    { name: 'Player1-2', position: 'Midfielder', number: 10 },
+                    { name: 'Player1-3', position: 'Defender', number: 4 },
+                    { name: 'Player1-4', position: 'Goalkeeper', number: 1 }
+                ]
+            },
+            {
+                grade: 5,
+                class: 2,
+                group: 'A',
+                players: [
+                    { name: 'Player2-1', position: 'Forward', number: 7 },
+                    { name: 'Player2-2', position: 'Midfielder', number: 8 },
+                    { name: 'Player2-3', position: 'Defender', number: 5 },
+                    { name: 'Player2-4', position: 'Goalkeeper', number: 1 }
+                ]
+            },
+            {
+                grade: 6,
+                class: 1,
+                group: 'B',
+                players: [
+                    { name: 'Player3-1', position: 'Forward', number: 11 },
+                    { name: 'Player3-2', position: 'Midfielder', number: 6 },
+                    { name: 'Player3-3', position: 'Defender', number: 3 },
+                    { name: 'Player3-4', position: 'Goalkeeper', number: 1 }
+                ]
+            },
+            {
+                grade: 6,
+                class: 2,
+                group: 'B',
+                players: [
+                    { name: 'Player4-1', position: 'Forward', number: 10 },
+                    { name: 'Player4-2', position: 'Midfielder', number: 8 },
+                    { name: 'Player4-3', position: 'Defender', number: 4 },
+                    { name: 'Player4-4', position: 'Goalkeeper', number: 1 }
+                ]
+            },
+            {
+                grade: 7,
+                class: 1,
+                group: 'C',
+                players: [
+                    { name: 'Player5-1', position: 'Forward', number: 9 },
+                    { name: 'Player5-2', position: 'Midfielder', number: 7 },
+                    { name: 'Player5-3', position: 'Defender', number: 5 },
+                    { name: 'Player5-4', position: 'Goalkeeper', number: 1 }
+                ]
+            },
+            {
+                grade: 7,
+                class: 2,
+                group: 'C',
+                players: [
+                    { name: 'Player6-1', position: 'Forward', number: 11 },
+                    { name: 'Player6-2', position: 'Midfielder', number: 6 },
+                    { name: 'Player6-3', position: 'Defender', number: 4 },
+                    { name: 'Player6-4', position: 'Goalkeeper', number: 1 }
+                ]
+            },
+            {
+                grade: 8,
+                class: 1,
+                group: 'D',
+                players: [
+                    { name: 'Player7-1', position: 'Forward', number: 10 },
+                    { name: 'Player7-2', position: 'Midfielder', number: 8 },
+                    { name: 'Player7-3', position: 'Defender', number: 5 },
+                    { name: 'Player7-4', position: 'Goalkeeper', number: 1 }
+                ]
+            },
+            {
+                grade: 8,
+                class: 2,
+                group: 'D',
+                players: [
+                    { name: 'Player8-1', position: 'Forward', number: 7 },
+                    { name: 'Player8-2', position: 'Midfielder', number: 6 },
+                    { name: 'Player8-3', position: 'Defender', number: 3 },
+                    { name: 'Player8-4', position: 'Goalkeeper', number: 1 }
+                ]
+            },
+        ];
+        
+        async function seedDB() {
+            try {
+                await Team.deleteMany({});
+                await Player.deleteMany({});
+                await Standing.deleteMany({});  // 스탠딩 삭제
+                
+                for (let teamData of teamsData) {
+                    // 팀 생성
+                    let team = new Team({
+                        grade: teamData.grade,
+                        class: teamData.class,
+                        group: teamData.group,
+                        players: teamData.players.map(p => ({
+                            name: p.name,
+                            position: p.position,
+                            number: p.number
+                        }))
+                    });
+                    await team.save();
 
-            const team = new Team({
-                grade: grade,
-                class: classNum,
-                players: [], // 플레이어는 나중에 추가
-                group: String.fromCharCode(65 + Math.floor((i - 1) / 4)) // A, B, C, D 그룹
-            });
-            teams.push(team);
-        }
-        await Promise.all(teams.map(team => team.save()));
+                    // 팀에 속한 플레이어 생성
+                    for (let playerData of teamData.players) {
+                        let player = new Player({
+                            name: playerData.name,
+                            position: playerData.position,
+                            team: team._id, // 팀의 ObjectId를 참조
+                        });
+                        await player.save();
+                    }
 
-        // 플레이어 데이터 생성
-        const players = [];
-        for (const team of teams) {
-            for (let i = 1; i <= 11; i++) { // 각 팀에 11명의 플레이어 생성
-                const player = new Player({
-                    name: `Player ${team.grade}-${team.class}-${i}`,
-                    team: team._id,
-                    position: ['Forward', 'Midfielder', 'Defender', 'Goalkeeper'][Math.floor(Math.random() * 4)],
-                    goals: Math.floor(Math.random() * 10),
-                    assists: Math.floor(Math.random() * 10),
-                    yellowCards: Math.floor(Math.random() * 3),
-                    redCards: Math.floor(Math.random() * 1)
-                });
-                players.push(player);
+                    // 스탠딩 데이터 생성
+                    let standing = new Standing({
+                        team: team._id, // 팀의 ObjectId를 참조
+                        played: 0,
+                        wins: 0,
+                        draws: 0,
+                        losses: 0,
+                        goalsFor: 0,
+                        goalsAgainst: 0,
+                        points: 0
+                    });
+                    await standing.save();
+                }
+
+                console.log("Database seeded with teams, players, and standings!");
+            } catch (err) {
+                console.error(err);
             }
         }
-        await Promise.all(players.map(player => player.save()));
 
-        // Schedule 및 Match 데이터 생성
-        const schedules = [];
-        const matches = [];
-        let matchDate = new Date('2024-08-10'); // 시작 날짜 설정
+        await seedDB();
 
-        // 팀 간 매치가 하루에 하나씩만 있도록 설정
-        for (let i = 0; i < teams.length; i++) {
-            for (let j = i + 1; j < teams.length; j++) {
-                if (matches.length >= 16) break; // 16경기까지만 생성
-                const schedule = new Schedule({
-                    date: matchDate, // 같은 날짜에 하나의 경기만 설정
-                    team1: teams[i]._id,
-                    team2: teams[j]._id
-                });
-                schedules.push(schedule);
-
-                const match = new Match({
-                    date: matchDate,
-                    team1: teams[i]._id,
-                    team2: teams[j]._id,
-                    score: { team1: Math.floor(Math.random() * 5), team2: Math.floor(Math.random() * 5) },
-                    events: [
-                        { minute: 15, team: teams[i]._id, player: players[i * 11]._id, eventType: 'goal' },
-                        { minute: 30, team: teams[j]._id, player: players[j * 11]._id, eventType: 'goal' }
-                    ]
-                });
-                matches.push(match);
-
-                // 다음 날짜로 이동
-                matchDate.setDate(matchDate.getDate() + 1);
-            }
-            if (matches.length >= 16) break; // 16경기까지만 생성
-        }
-        await Promise.all(schedules.map(schedule => schedule.save()));
-        await Promise.all(matches.map(match => match.save()));
-
-        // Standing 데이터 생성
-        const standings = [];
-        for (const team of teams) {
-            const standing = new Standing({
-                team: team._id,
-                played: 1,
-                wins: Math.floor(Math.random() * 2),
-                draws: Math.floor(Math.random() * 2),
-                losses: 1 - Math.floor(Math.random() * 2),
-                goalsFor: Math.floor(Math.random() * 5),
-                goalsAgainst: Math.floor(Math.random() * 5),
-                points: Math.floor(Math.random() * 3) * (1 + Math.floor(Math.random() * 2))
-            });
-            standings.push(standing);
-        }
-        await Promise.all(standings.map(standing => standing.save()));
 
         console.log('Database seeded successfully!');
     } catch (error) {

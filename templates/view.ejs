@@ -29,8 +29,7 @@
             <div class="content mt-2">
                 <div class="d-flex mb-2">
                     <div class="me-auto"><span class="opacity-90 font-10"><i class="far fa-clock pe-2"></i><%= new Date(post.createdAt).toLocaleDateString() %></span></div>
-                    <div class="mx-auto"><span class="opacity-90 font-10"><i class="far fa-comment pe-2"></i><%= post.author %> 작성</span></div>
-                    <div class="ms-auto"><span class="opacity-90 font-10"><i class="far fa-comment pe-2"></i><%= post.view %> 조회</span></div>
+                    <div class="mx-auto"><span class="opacity-90 font-10"><i class="far fa-circle pe-2"></i><%= post.author %> 작성</span></div>
                 </div>
                 <div class="divider mb-3"></div>
                     <%- post.content %>
