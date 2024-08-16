@@ -111,7 +111,7 @@ app.get('/auth/google/callback',
     }
   }
 );
-
+  
 app.get('/', (req, res) => renderTemplate(res, req, "index.ejs"));
 
 app.get('/login', (req, res) => {
@@ -313,8 +313,9 @@ app.post('/matches', async (req, res) => {
     ]);
 
     for (const event of events) {
-        const { minute, team, player, eventType } = event;
-        const playerDoc = await Player.findById(player);
+        const { minute, team, player, eventType, assistsPlayer } = event;
+        const playerDoc = await Player.findOne({ team, name: player });
+        const assistsPlayerDoc = await Player.findOne({ team, name: assistsPlayer });
 
         if (playerDoc) {
             if (eventType === 'goal') {
@@ -325,6 +326,10 @@ app.post('/matches', async (req, res) => {
                 playerDoc.redCards += 1;
             }
             await playerDoc.save();
+        }
+        if (assistsPlayerDoc) {
+          assistsPlayerDoc.assists += 1;
+          await assistsPlayerDoc.save();
         }
     }
 

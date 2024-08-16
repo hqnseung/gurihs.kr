@@ -43,15 +43,20 @@
                 <input type="number" id="minute" name="events[0][minute]" required min="0">
 
                 <label for="eventTeam0">Team:</label>
-                <select id="eventTeam0" name="events[0][team]" required onchange="loadPlayers('eventTeam0', 'eventPlayer0')">
+                <select id="eventTeam0" name="events[0][team]" required onchange="loadPlayers('eventTeam0', 'eventPlayer0', 'eventassistPlayer0')">
                     <option value="">Select Team</option>
                     <% teams.forEach(function(team) { %>
                         <option value="<%= team._id %>"><%= team.grade %>학년 <%= team.class %>반 (<%= team.group %>조)</option>
                     <% }); %>
                 </select>
 
-                <label for="eventPlayer0">Player:</label>
+                <label for="eventPlayer0">득점 Player:</label>
                 <select id="eventPlayer0" name="events[0][player]" required>
+                    <option value="">Select Player</option>
+                </select>
+
+                <label for="eventassistPlayer0">어시스트 Player:</label>
+                <select id="eventassistPlayer0" name="events[0][assistsPlayer]" required>
                     <option value="">Select Player</option>
                 </select>
 
@@ -71,13 +76,15 @@
     <script>
         let eventCount = 1;
 
-        async function loadPlayers(teamSelectId, playerSelectId) {
+        async function loadPlayers(teamSelectId, playerSelectId, assistsPlayerId) {
             const teamSelect = document.getElementById(teamSelectId);
             const playerSelect = document.getElementById(playerSelectId);
+            const assistsPlayerSelect = document.getElementById(assistsPlayerId);
 
             const teamId = teamSelect.value;
             if (!teamId) {
                 playerSelect.innerHTML = '<option value="">Select Player</option>';
+                assistsPlayerSelect.innerHTML = '<option value="">Select Player</option>';
                 return;
             }
 
@@ -86,12 +93,20 @@
                 const players = await response.json();
 
                 playerSelect.innerHTML = '<option value="">Select Player</option>';
+                assistsPlayerSelect.innerHTML = '<option value="">Select Player</option>';
                 players.forEach(player => {
                     const option = document.createElement('option');
-                    option.value = player._id;
+                    option.value = player.name;
                     option.textContent = `${player.name} (${player.position})`;
                     playerSelect.appendChild(option);
                 });
+                players.forEach(player => {
+                    const option = document.createElement('option');
+                    option.value = player.name;
+                    option.textContent = `${player.name} (${player.position})`;
+                    assistsPlayerSelect.appendChild(option);
+                });
+                
             } catch (error) {
                 console.error('Failed to load players:', error);
             }
@@ -106,15 +121,20 @@
                 <input type="number" id="minute" name="events[${eventCount}][minute]" required min="0">
 
                 <label for="eventTeam${eventCount}">Team:</label>
-                <select id="eventTeam${eventCount}" name="events[${eventCount}][team]" required onchange="loadPlayers('eventTeam${eventCount}', 'eventPlayer${eventCount}')">
+                <select id="eventTeam${eventCount}" name="events[${eventCount}][team]" required onchange="loadPlayers('eventTeam${eventCount}', 'eventPlayer${eventCount}', 'eventassistPlayer${eventCount}')">
                     <option value="">Select Team</option>
                     <% teams.forEach(function(team) { %>
-                        <option value="<%= team._id %>">Grade <%= team.grade %>, Class <%= team.class %> (Group <%= team.group %>)</option>
+                        <option value="<%= team._id %>"><%= team.grade %>학년 <%= team.class %>반 (<%= team.group %>조)</option>
                     <% }); %>
                 </select>
 
-                <label for="eventPlayer${eventCount}">Player:</label>
+                <label for="eventPlayer${eventCount}">득점 Player:</label>
                 <select id="eventPlayer${eventCount}" name="events[${eventCount}][player]" required>
+                    <option value="">Select Player</option>
+                </select>
+
+                <label for="eventassistPlayer${eventCount}">어시스트 Player:</label>
+                <select id="eventassistPlayer${eventCount}" name="events[${eventCount}][assistsPlayer]" required>
                     <option value="">Select Player</option>
                 </select>
 
