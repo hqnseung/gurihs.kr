@@ -1,27 +1,25 @@
-<%- include("./partials/header") %>
-
-<script>swingWebViewPlugin.app.login.doAppLogin("<%= user.email.substring(0, user.email.indexOf('@')) %>","<%= user.name.replace(/\d+/g, '') %>"); </script>
+<%- include("./partials/gugocup_header") %>
 
 <div id="page">
-    <div id="footer-bar" class="footer-bar-1">
+    <!-- <div id="footer-bar" class="footer-bar-1">
         <a href="/board"><i class="fa fa-window-restore"></i><span>소식지</span></a>
         <a href="/main"><i class="fa fa-home"></i><span>홈</span></a>
         <a href="/point"><i class="fa fa-star"></i><span>구고포인트</span></a>
         <a href="/gugocup" class="active-nav"><i class="fa fa-futbol"></i><span>구고컵</span></a>
-    </div>  
+    </div>   -->
 
     <div class="header header-fixed header-logo-center">
         <a href="/gugocup" class="header-title">GUGOCUP 2024</a>
     </div>
 
     <br><br>
-        <div class="card rounded-0" data-card-height="350" style="background-image: url('');">
+        <div class="card rounded-0" data-card-height="350" style="background-image: url('/index/img/guri2.jpg');">
             <div class="card-bottom m-3">
                 <span class="bg-highlight px-2 py-1 rounded-xs font-10 font-500">GUGOCUP 2024</span>
                 <h1 class="color-white font-30 mt-1"><%= team.grade %>학년 <%= team.class %>반</h1>
                 <p class="color-white opacity-70 pt-3 mb-2 line-height-s">
-                    팀 아이디 : <%= team._id %><br>
-                    순위 아이디 : <%= standing._id %>
+                    <%= team.group %>조 <%= standing.points %>점 ( <%= rank %>등 ) / <%= standing.wins %>승 / <%= standing.losses %>패 / <%= standing.draws %>무<br>
+                    팀 아이디 : <%= team._id %>
                 </p>
             </div>
             <div class="card-overlay bg-gradient"></div>
@@ -31,13 +29,15 @@
                 <h4 class="mb-0 mb-1">팀 정보</h4>
                 <p class="line-height-s">
                     예선 조 : <%= team.group %>조<br>
-                    경기 횟수 : <%= standing.played %>회<br>
-                    포인트 : <%= standing.points %>점 (<%= rank %>등)<br>
+                    예선 포인트 : <%= standing.points %>점 (<%= rank %>등)<br>
+                    <br>
+                    총 경기 횟수 : <%= standing.played %>회<br>
                     승리 : <%= standing.wins %>회<br>
                     패배 : <%= standing.losses %>회<br>
                     무승부 : <%= standing.draws %>회<br>
-                    득점 : <%= standing.goalsFor %>회<br>
-                    실점 : <%= standing.goalsAgainst %>회<br>
+                    <br>
+                    총 득점 : <%= standing.goalsFor %>회<br>
+                    총 실점 : <%= standing.goalsAgainst %>회<br>
                 </p>
                 
             </div>
@@ -45,23 +45,7 @@
 
         <div class="card card-style">
             <div class="content mb-2">
-                <h3>선수 정보</h3>
-
-                <div class="list-group list-custom-small">
-                    <% players.forEach(player => { %>
-                        <a href="/gugocup/player?id=<%= player._id %>">
-                            <i class="fa font-14 fa-sharp fa-solid fa-shirt color-blue-dark"></i>
-                            <span><%= player.name %> [ <%= player.position %> ]</span>
-                            <i class="fa fa-angle-right"></i>
-                        </a>
-                    <% }); %>           
-                </div>
-            </div>  
-        </div>     
-        
-        <div class="card card-style">
-            <div class="content mb-2">
-                <h3>역대경기 정보</h3>
+                <h3>역대 경기</h3>
 
                 <div class="list-group list-custom-small">
                     <% matches.forEach(match => { %>
@@ -76,6 +60,22 @@
                 </div>
             </div>  
         </div>   
+
+        <div class="card card-style">
+            <div class="content mb-2">
+                <h3>선수 정보</h3>
+
+                <div class="list-group list-custom-small">
+                    <% team.players.forEach(player => { %>
+                        <a href="/gugocup/player?id=<%= player._id %>">
+                            <i class="fa font-14 fa-sharp fa-solid fa-shirt color-blue-dark"></i>
+                            <span><%= player.number %>번 <%= player.name %></span>
+                            <i class="fa fa-angle-right"></i>
+                        </a>
+                    <% }); %>           
+                </div>
+            </div>  
+        </div>     
 
         <br><br><br>
     <!-- End of Page Content-->
@@ -196,5 +196,5 @@
         </div>
     </div>
 
-
-    <%- include("./partials/footer", { user }) %>
+    <script type="text/javascript" src="/app/scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/app/scripts/custom.js"></script>

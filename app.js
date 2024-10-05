@@ -19,8 +19,6 @@ const Post = require("./models/Post");
 const DATABASE_URL = process.env.DATABASE_URL
 const sessionSecret = process.env.sessionSecret
 const startType = process.env.startType
-const marketSecret = process.env.marketSecret
-const Log = require("./models/Log");
 const Schedule = require('./models/Schedules');
 const Match = require('./models/Match');
 const Team = require('./models/Team');
@@ -113,6 +111,9 @@ app.get('/auth/google/callback',
 );
   
 app.get('/', (req, res) => renderTemplate(res, req, "index.ejs"));
+app.get('/app/privacy', (req, res) => renderTemplate(res, req, "privacy.ejs"));
+app.get('/installApp', (req, res) => renderTemplate(res, req, "installApp.ejs"));
+
 
 app.get('/login', (req, res) => {
   req.user ? res.redirect('/main') : renderTemplate(res, req, "login.ejs", { status: "ok" });
@@ -132,8 +133,8 @@ function formatDateForDisplay(date) {
 }
 
 app.get('/main', async (req, res) => {
-  if (!req.user) return res.redirect('/login');
-  const user = req.user
+  // if (!req.user) return res.redirect('/login');
+  // const user = req.user
 
   const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
   const url = `https://open.neis.go.kr/hub/mealServiceDietInfo?Type=json&pIndex=1&pSize=100&ATPT_OFCDC_SC_CODE=J10&SD_SCHUL_CODE=7530054&KEY=6b2c5a8bd8284662bf5be43ffb875dc4&MLSV_YMD=${date}`;
@@ -166,49 +167,12 @@ app.get('/main', async (req, res) => {
       }
     }
   
-    renderTemplate(res, req, "main.ejs", { user, lunch, date: foundDate });
+    renderTemplate(res, req, "main.ejs", { lunch, date: foundDate });
   };
   
   fetchLunchInfo();
 });
 
-app.get('/point', async (req, res) => {
-  if (!req.user) return res.redirect('/login');
-
-  const userId = req.user.email.split('@')[0];
-  const user = await User.findOne({ id: userId });
-
-  renderTemplate(res, req, "point.ejs", { point: user.point.toLocaleString(), user: req.user });
-});
-
-app.post('/point', async (req, res) => {
-  if (!req.user) return res.status(400).json({ message: 'Error occurred while processing data' });
-
-  const userId = req.user.email.split('@')[0];
-  const { points, adminPassword } = req.body;
-
-  if (adminPassword !== marketSecret || points < 0) {
-    return res.status(400).json({ message: 'Error occurred while processing data' });
-  }
-
-  const user = await User.findOne({ id: userId });
-  if (user.point - points < 0) {
-    return res.status(400).json({ message: 'Error occurred while processing data' });
-  }
-
-  user.point -= points;
-  await user.save();
-  const log = new Log({
-    userId: user.id,
-    userName: user.name,
-    point: -points,
-    reason: "구리고등학교 매점"
-  })
-  await log.save()
-  console.log(`Gugopoint 결제완료: ${user.id}(${user.name}) "${-points}" - "구리고등학교 매점"`)
-
-  res.json({ message: 'Data received successfully' });
-});
 
 app.get('/post', async (req, res) => {
   if (!req.user) return res.redirect('/login'); 
@@ -328,8 +292,8 @@ app.post('/matches', async (req, res) => {
             await playerDoc.save();
         }
         if (assistsPlayerDoc) {
-          assistsPlayerDoc.assists += 1;
-          await assistsPlayerDoc.save();
+          // assistsPlayerDoc.assists += 1;
+          // await assistsPlayerDoc.save();
         }
     }
 
@@ -339,6 +303,39 @@ app.post('/matches', async (req, res) => {
       res.status(500).send('Internal Server Error');
   }
 });
+
+app.get('/schedule/new', async (req, res) => {
+  if (!req.user) return res.redirect('/login');
+
+  const userId = req.user.email.split('@')[0];
+  const user = await User.findOne({ id: userId });
+
+  if (user.role !== "admin") return renderTemplate(res, req, "403.ejs");
+
+  const teams = await Team.find(); // 모든 팀을 가져옴
+  renderTemplate(res, req, "schedulePost.ejs", { teams });
+});
+
+app.post('/schedule', async (req, res) => {
+  if (!req.user) return res.status(400).json({ message: 'Error occurred while processing data' });
+
+  try {
+    const { date, team1, team2 } = req.body;
+
+    const schedule = new Schedule({
+      date,
+      team1,
+      team2
+    });
+
+    await schedule.save();
+    res.redirect('/gugocup/schedule'); // 스케줄이 생성된 후 리다이렉트
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Internal Server Error');
+  }
+});
+
 
 app.get('/teams/:teamId/players', async (req, res) => {
   try {
@@ -350,57 +347,10 @@ app.get('/teams/:teamId/players', async (req, res) => {
   }
 });
 
-async function updateStandings(team1Standing, team2Standing, scoreTeam1, scoreTeam2) {
-  team1Standing.played += 1;
-  team2Standing.played += 1;
-
-  team1Standing.goalsFor += scoreTeam1;
-  team1Standing.goalsAgainst += scoreTeam2;
-  team2Standing.goalsFor += scoreTeam2;
-  team2Standing.goalsAgainst += scoreTeam1;
-
-  if (scoreTeam1 > scoreTeam2) {
-      team1Standing.wins += 1;
-      team1Standing.points += 3;
-      team2Standing.losses += 1;
-  } else if (scoreTeam1 < scoreTeam2) {
-      team2Standing.wins += 1;
-      team2Standing.points += 3;
-      team1Standing.losses += 1;
-  } else {
-      team1Standing.draws += 1;
-      team2Standing.draws += 1;
-      team1Standing.points += 1;
-      team2Standing.points += 1;
-  }
-
-  await team1Standing.save();
-  await team2Standing.save();
-}
-
-async function updatePlayerStats(events) {
-  for (const event of events) {
-      const player = await Player.findOne({ name: event.player, team: event.team });
-      if (!player) continue;
-
-      switch (event.eventType) {
-          case 'goal':
-              player.goals += 1;
-              break;
-          case 'yellow card':
-              player.yellowCards += 1;
-              break;
-          case 'red card':
-              player.redCards += 1;
-              break;
-      }
-
-      await player.save();
-  }
-}
-
 app.get('/gugocup', async (req, res) => {
-  if (!req.user) return res.redirect('/login'); 
+  // if (!req.user) return res.redirect('/login'); 
+  // console.log(req)
+  if (!req.rawHeaders.join(' ').includes('WebView') || req.rawHeaders.join(' ').includes('kakao') || req.rawHeaders.join(' ').includes('Instagram')) return res.redirect("/installApp")
 
   const startOfDay = new Date();
   startOfDay.setHours(0, 0, 0, 0);
@@ -444,11 +394,14 @@ app.get('/gugocup', async (req, res) => {
   const allPlayers = await Player.find().sort({ goals: -1 }).limit(5).populate('team');  
   const allMatches = (await Match.find().populate('team1').populate('team2')).sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 3);
   
-  renderTemplate(res, req, "gugocup.ejs", { user: req.user, todaySchedule, matches, allTeams, allMatches, allPlayers, groupedStandings });
+  // renderTemplate(res, req, "gugocup.ejs", { user: req.user, todaySchedule, matches, allTeams, allMatches, allPlayers, groupedStandings });
+  renderTemplate(res, req, "gugocup.ejs", { todaySchedule, matches, allTeams, allMatches, allPlayers, groupedStandings });
+
 });
 
 app.get('/gugocup/team', async (req, res) => {
-  if (!req.user) return res.redirect('/login');
+  // if (!req.user) return res.redirect('/login');
+  if (!req.rawHeaders.join(' ').includes('WebView') || req.rawHeaders.join(' ').includes('kakao') || req.rawHeaders.join(' ').includes('Instagram')) return res.redirect("/installApp")
   const id = req.query.id
 
   if (id && id.match(/^[0-9a-fA-F]{24}$/) && await Team.findById(id)) {
@@ -472,83 +425,77 @@ app.get('/gugocup/team', async (req, res) => {
 
     const players = await Player.find({ team: id });
 
-    renderTemplate(res, req, "team.ejs", { team, standing, user: req.user, rank, matches, players });
+    // renderTemplate(res, req, "team.ejs", { team, standing, user: req.user, rank, matches, players });
+    renderTemplate(res, req, "team.ejs", { team, standing, rank, matches, players });
   } else {
     const allTeam = await Team.find()
-    renderTemplate(res, req, "allTeam.ejs", { user: req.user, allTeam });
+    // renderTemplate(res, req, "allTeam.ejs", { user: req.user, allTeam });
+    renderTemplate(res, req, "allTeam.ejs", { allTeam });
   }
 });
 
-// app.get('/gugocup/team/:name', async (req, res) => {
-//   const name = req.params.name;
-//   const matches = name.match(/^([^-\s]+)-([^-\s]+)$/);
-
-// if (matches) {
-//     const part1 = matches[1];
-//     const part2 = matches[2];
-//     const team = await Team.findOne({ grade: part1, class: part2 })
-//     if (team) {
-//       res.redirect(`/gugocup/team?id=${team._id}`)
-//     } else {
-//       res.redirect("/gugocup/team")
-//     }
-// } else {
-//     res.redirect("/gugocup/team")
-// }
-// });
 
 app.get('/gugocup/player', async (req, res) => {
-  if (!req.user) return res.redirect('/login');
+  if (!req.rawHeaders.join(' ').includes('WebView') || req.rawHeaders.join(' ').includes('kakao') || req.rawHeaders.join(' ').includes('Instagram')) return res.redirect("/installApp")
+  // if (!req.user) return res.redirect('/login');
   const id = req.query.id
 
   if (id && id.match(/^[0-9a-fA-F]{24}$/) && await Player.findById(id)) {
     const player = await Player.findById(id).populate('team')
 
-    renderTemplate(res, req, "player.ejs", { player, user: req.user });
+    // renderTemplate(res, req, "player.ejs", { player, user: req.user });
+    renderTemplate(res, req, "player.ejs", { player });
   } else {
     const allPlayer = await Player.find().sort({ goals: -1 }).populate('team')
-    renderTemplate(res, req, "allPlayer.ejs", { user: req.user, allPlayer });
+    // renderTemplate(res, req, "allPlayer.ejs", { user: req.user, allPlayer });
+    renderTemplate(res, req, "allPlayer.ejs", { allPlayer });
   }
 });
 
 app.get('/gugocup/match', async (req, res) => {
-  if (!req.user) return res.redirect('/login');
+  if (!req.rawHeaders.join(' ').includes('WebView') || req.rawHeaders.join(' ').includes('kakao') || req.rawHeaders.join(' ').includes('Instagram')) return res.redirect("/installApp")
+  // if (!req.user) return res.redirect('/login');
   const id = req.query.id
 
   if (id && id.match(/^[0-9a-fA-F]{24}$/) && await Match.findById(id)) {
     const match = await Match.findById(id).populate('team1').populate('team2');
 
-    renderTemplate(res, req, "match.ejs", { match, user: req.user });
+    // renderTemplate(res, req, "match.ejs", { match, user: req.user });
+    renderTemplate(res, req, "match.ejs", { match });
   } else {
     const allMatches = (await Match.find().populate('team1').populate('team2')).sort((a, b) => new Date(b.date) - new Date(a.date));
-    renderTemplate(res, req, "allMatch.ejs", { user: req.user, allMatches });
+    // renderTemplate(res, req, "allMatch.ejs", { user: req.user, allMatches });
+    renderTemplate(res, req, "allMatch.ejs", { allMatches });
   }
 });
 
 app.get('/gugocup/schedule', async (req, res) => {
-  if (!req.user) return res.redirect('/login');
+  if (!req.rawHeaders.join(' ').includes('WebView') || req.rawHeaders.join(' ').includes('kakao') || req.rawHeaders.join(' ').includes('Instagram')) return res.redirect("/installApp")
+  // if (!req.user) return res.redirect('/login');
   const id = req.query.id
 
   if (id && id.match(/^[0-9a-fA-F]{24}$/) && await Schedule.findById(id)) {
     const schedule = await Schedule.findById(id);
-    renderTemplate(res, req, "schedule.ejs", { schedule, user: req.user });
+    // renderTemplate(res, req, "schedule.ejs", { schedule, user: req.user });
+    renderTemplate(res, req, "schedule.ejs", { schedule });
   } else {
     const today = new Date();
     const allSchedule = await Schedule.find({ date: { $gte: today } }) .populate('team1').populate('team2').sort({ date: +1 }).exec();
-    renderTemplate(res, req, "allSchedule.ejs", { user: req.user, allSchedule });
+    // renderTemplate(res, req, "allSchedule.ejs", { user: req.user, allSchedule });
+    renderTemplate(res, req, "allSchedule.ejs", { allSchedule });
   }
 });
 
 app.get('/board', async (req, res) => {                               
-  if (!req.user) return res.redirect('/login');                     
+  // if (!req.user) return res.redirect('/login');                     
   const id = req.query.id                                         
                                                               
   if (id && id.match(/^[0-9a-fA-F]{24}$/) && await Post.findById(id)) {
     const post = await Post.findById(id);
-    renderTemplate(res, req, "view.ejs", { post, user: req.user });
+    renderTemplate(res, req, "view.ejs", { post });
   } else {
     const postList = await Post.find();
-    renderTemplate(res, req, "board.ejs", { user: req.user, postList });
+    renderTemplate(res, req, "board.ejs", { postList });
   }
 });
 

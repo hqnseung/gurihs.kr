@@ -1,14 +1,12 @@
 <%- include("./partials/header") %>
 
-<script>swingWebViewPlugin.app.login.doAppLogin("<%= user.email.substring(0, user.email.indexOf('@')) %>","<%= user.name.replace(/\d+/g, '') %>"); </script>
-
 <div id="page">
     <div id="footer-bar" class="footer-bar-1">
         <a href="/board"><i class="fa fa-window-restore"></i><span>소식지</span></a>
         <a href="/main"><i class="fa fa-home"></i><span>홈</span></a>
-        <a href="/point"><i class="fa fa-star"></i><span>구고포인트</span></a>
         <a href="/gugocup" class="active-nav"><i class="fa fa-futbol"></i><span>구고컵</span></a>
     </div>  
+
     <div class="card card-style mx-0 rounded-0 position-fixed" data-card-height="450" style="top:0px; width:100%; background-image: url(/index/img/guri2.jpg);">
         <div class="card-bottom mb-4 no-click">
             <div class="content no-click">
@@ -27,7 +25,7 @@
             <div class="content">
                 <div class="d-flex px-3 pb-3">
                     <div class="align-self-center">
-                        <h4 class="mb-0">경기 스케쥴</h4>
+                        <h4 class="mb-0">경기 스케줄</h4>
                         <p class="mt-n1 mb-0">
                             남은 경기들을 확인하세요!
                         </p>
@@ -55,8 +53,7 @@
                                                 </div>
                                                 <div>
                                                     <span class="color-highlight font-300 d-block pt-0 text-uppercase font-10">
-                                                        <%= new Date(schedule.date).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' }) %> - 
-                                                        <%= new Date(schedule.date).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: true }) %>
+                                                        <%= new Date(schedule.date).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' }) %> 점심시간
                                                     </span>
                     
                                                     <strong class="color-theme font-16 d-block mt-n2">
@@ -99,8 +96,7 @@
                         </div>
                         <div>
                             <span class="color-highlight font-300 d-block pt-2 text-uppercase font-10">
-                                <%= new Date(match.date).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' }) %> - 
-                                <%= new Date(match.date).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) %>
+                                <%= new Date(match.date).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' }) %> 점심시간
                             </span>
                             
                             <strong class="color-theme font-16 d-block mt-n2">
@@ -245,143 +241,36 @@
                     <div class="content">
                         
                         <% allPlayers.forEach((player, index) => { %>
-                            <a href="/gugocup/player?id=<%= player._id %>" class="d-flex mb-3">
-                                <div class="align-self-center">
-                                    <h1 class="pe-3 font-40 font-900 opacity-30"><%= index + 1 %></h1>
+                            <div class="d-flex px-2 mb-3">
+                                <div>
+                                    <div class="align-self-center">
+                                        <h1 class="pe-3 font-40 font-900 opacity-30"><%= index + 1 %></h1>
+                                    </div>
                                 </div>
-                                <div class="align-self-center">
-                                    <h4 class="mb-n1 font-15"><%= player.team.grade %>학년 <%= player.team.class %>반 <%= player.name %></h4>
-                                    <% if (index === 0) { %>    
-                                        <p class="font-10 px-2 py-1 badge bg-highlight color-white"><%= player.goals %>골 / <%= player.assists %> 어시스트</p>
-                                    <% } else { %>
-                                        <p class="font-10 px-2 py-1 badge bg-gray-dark color-white"><%= player.goals %> 골 / <%= player.assists %> 어시스트</p>
-                                    <% } %>
+                                <div>
+                                    <div class="align-self-center ms-auto">
+                                        <h4 class="mb-n1 font-15"><%= player.team.grade %>학년 <%= player.team.class %>반 <%= player.name %></h4>
+                                        <% if (index === 0) { %>    
+                                            <p class="font-10 px-2 py-1 badge bg-highlight color-white"><%= player.team.grade %>학년 <%= player.team.class %>반 / <%= player.goals %>골</p>
+                                        <% } else { %>
+                                            <p class="font-10 px-2 py-1 badge bg-gray-dark color-white"><%= player.team.grade %>학년 <%= player.team.class %>반 / <%= player.goals %> 골</p>
+                                        <% } %>
+                                    </div>
                                 </div>
-                            </a>
+                                <div class="align-self-center ms-auto">
+                                    <a href="/gugocup/player?id=<%= player._id %>" class="btn btn-xs bg-blue-dark rounded-sm text-uppercase font-400">
+                                        자세히 보기
+                                    </a>
+                                </div>
+                            </div>
                         <% }) %>
                     </div>
+
                 
-                <br><br><br><br>
             </div>
+            
         </div>
     </div>
     <!-- End of Page Content-->
 
-    <!-- All Menus, Action Sheets, Modals, Notifications, Toasts, Snackbars get Placed outside the <div class="page-content"> -->
-    <div id="menu-settings" class="menu menu-box-bottom menu-box-detached">
-        <div class="menu-title mt-0 pt-0"><h1>Settings</h1><p class="color-highlight">Flexible and Easy to Use</p><a href="#" class="close-menu"><i class="fa fa-times"></i></a></div>
-        <div class="divider divider-margins mb-n2"></div>
-        <div class="content">
-            <div class="list-group list-custom-small">
-                <a href="#" data-toggle-theme data-trigger-switch="switch-dark-mode" class="pb-2 ms-n1">
-                    <i class="fa font-12 fa-moon rounded-s bg-highlight color-white me-3"></i>
-                    <span>Dark Mode</span>
-                    <div class="custom-control scale-switch ios-switch">
-                        <input data-toggle-theme type="checkbox" class="ios-input" id="switch-dark-mode">
-                        <label class="custom-control-label" for="switch-dark-mode"></label>
-                    </div>
-                    <i class="fa fa-angle-right"></i>
-                </a>
-            </div>
-            <div class="list-group list-custom-large">
-                <a data-menu="menu-highlights" href="#">
-                    <i class="fa font-14 fa-tint bg-green-dark rounded-s"></i>
-                    <span>Page Highlight</span>
-                    <strong>16 Colors Highlights Included</strong>
-                    <span class="badge bg-highlight color-white">HOT</span>
-                    <i class="fa fa-angle-right"></i>
-                </a>
-                <a data-menu="menu-backgrounds" href="#" class="border-0">
-                    <i class="fa font-14 fa-cog bg-blue-dark rounded-s"></i>
-                    <span>Background Color</span>
-                    <strong>10 Page Gradients Included</strong>
-                    <span class="badge bg-highlight color-white">NEW</span>
-                    <i class="fa fa-angle-right"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-    <!-- Menu Settings Highlights-->
-    <div id="menu-highlights" class="menu menu-box-bottom menu-box-detached">
-        <div class="menu-title"><h1>Highlights</h1><p class="color-highlight">Any Element can have a Highlight Color</p><a href="#" class="close-menu"><i class="fa fa-times"></i></a></div>
-        <div class="divider divider-margins mb-n2"></div>
-        <div class="content">
-            <div class="highlight-changer">
-                <a href="#" data-change-highlight="blue"><i class="fa fa-circle color-blue-dark"></i><span class="color-blue-light">Default</span></a>
-                <a href="#" data-change-highlight="red"><i class="fa fa-circle color-red-dark"></i><span class="color-red-light">Red</span></a>
-                <a href="#" data-change-highlight="orange"><i class="fa fa-circle color-orange-dark"></i><span class="color-orange-light">Orange</span></a>
-                <a href="#" data-change-highlight="pink2"><i class="fa fa-circle color-pink2-dark"></i><span class="color-pink-dark">Pink</span></a>
-                <a href="#" data-change-highlight="magenta"><i class="fa fa-circle color-magenta-dark"></i><span class="color-magenta-light">Purple</span></a>
-                <a href="#" data-change-highlight="aqua"><i class="fa fa-circle color-aqua-dark"></i><span class="color-aqua-light">Aqua</span></a>
-                <a href="#" data-change-highlight="teal"><i class="fa fa-circle color-teal-dark"></i><span class="color-teal-light">Teal</span></a>
-                <a href="#" data-change-highlight="mint"><i class="fa fa-circle color-mint-dark"></i><span class="color-mint-light">Mint</span></a>
-                <a href="#" data-change-highlight="green"><i class="fa fa-circle color-green-light"></i><span class="color-green-light">Green</span></a>
-                <a href="#" data-change-highlight="grass"><i class="fa fa-circle color-green-dark"></i><span class="color-green-dark">Grass</span></a>
-                <a href="#" data-change-highlight="sunny"><i class="fa fa-circle color-yellow-light"></i><span class="color-yellow-light">Sunny</span></a>
-                <a href="#" data-change-highlight="yellow"><i class="fa fa-circle color-yellow-dark"></i><span class="color-yellow-light">Goldish</span></a>
-                <a href="#" data-change-highlight="brown"><i class="fa fa-circle color-brown-dark"></i><span class="color-brown-light">Wood</span></a>
-                <a href="#" data-change-highlight="night"><i class="fa fa-circle color-dark-dark"></i><span class="color-dark-light">Night</span></a>
-                <a href="#" data-change-highlight="dark"><i class="fa fa-circle color-dark-light"></i><span class="color-dark-light">Dark</span></a>
-                <div class="clearfix"></div>
-            </div>
-            <a href="#" data-menu="menu-settings" class="mb-3 btn btn-full btn-m rounded-sm bg-highlight shadow-xl text-uppercase font-900 mt-4">Back to Settings</a>
-        </div>
-    </div>
-    <!-- Menu Settings Backgrounds-->
-    <div id="menu-backgrounds" class="menu menu-box-bottom menu-box-detached">
-        <div class="menu-title"><h1>Backgrounds</h1><p class="color-highlight">Change Page Color Behind Content Boxes</p><a href="#" class="close-menu"><i class="fa fa-times"></i></a></div>
-        <div class="divider divider-margins mb-n2"></div>
-        <div class="content">
-            <div class="background-changer">
-                <a href="#" data-change-background="default"><i class="bg-theme"></i><span class="color-dark-dark">Default</span></a>
-                <a href="#" data-change-background="plum"><i class="body-plum"></i><span class="color-plum-dark">Plum</span></a>
-                <a href="#" data-change-background="magenta"><i class="body-magenta"></i><span class="color-dark-dark">Magenta</span></a>
-                <a href="#" data-change-background="dark"><i class="body-dark"></i><span class="color-dark-dark">Dark</span></a>
-                <a href="#" data-change-background="violet"><i class="body-violet"></i><span class="color-violet-dark">Violet</span></a>
-                <a href="#" data-change-background="red"><i class="body-red"></i><span class="color-red-dark">Red</span></a>
-                <a href="#" data-change-background="green"><i class="body-green"></i><span class="color-green-dark">Green</span></a>
-                <a href="#" data-change-background="sky"><i class="body-sky"></i><span class="color-sky-dark">Sky</span></a>
-                <a href="#" data-change-background="orange"><i class="body-orange"></i><span class="color-orange-dark">Orange</span></a>
-                <a href="#" data-change-background="yellow"><i class="body-yellow"></i><span class="color-yellow-dark">Yellow</span></a>
-                <div class="clearfix"></div>
-            </div>
-            <a href="#" data-menu="menu-settings" class="mb-3 btn btn-full btn-m rounded-sm bg-highlight shadow-xl text-uppercase font-900 mt-4">Back to Settings</a>
-        </div>
-    </div>
-    <!-- Menu Share -->
-    <div id="menu-share" class="menu menu-box-bottom menu-box-detached">
-        <div class="menu-title mt-n1"><h1>Share the Love</h1><p class="color-highlight">Just Tap the Social Icon. We'll add the Link</p><a href="#" class="close-menu"><i class="fa fa-times"></i></a></div>
-        <div class="content mb-0">
-            <div class="divider mb-0"></div>
-            <div class="list-group list-custom-small list-icon-0">
-                <a href="auto_generated" class="shareToFacebook external-link">
-                    <i class="font-18 fab fa-facebook-square color-facebook"></i>
-                    <span class="font-13">Facebook</span>
-                    <i class="fa fa-angle-right"></i>
-                </a>
-                <a href="auto_generated" class="shareToTwitter external-link">
-                    <i class="font-18 fab fa-twitter-square color-twitter"></i>
-                    <span class="font-13">Twitter</span>
-                    <i class="fa fa-angle-right"></i>
-                </a>
-                <a href="auto_generated" class="shareToLinkedIn external-link">
-                    <i class="font-18 fab fa-linkedin color-linkedin"></i>
-                    <span class="font-13">LinkedIn</span>
-                    <i class="fa fa-angle-right"></i>
-                </a>
-                <a href="auto_generated" class="shareToWhatsApp external-link">
-                    <i class="font-18 fab fa-whatsapp-square color-whatsapp"></i>
-                    <span class="font-13">WhatsApp</span>
-                    <i class="fa fa-angle-right"></i>
-                </a>
-                <a href="auto_generated" class="shareToMail external-link border-0">
-                    <i class="font-18 fa fa-envelope-square color-mail"></i>
-                    <span class="font-13">Email</span>
-                    <i class="fa fa-angle-right"></i>
-                </a>
-            </div>
-        </div>
-    </div>
-
-
-    <%- include("./partials/footer", { user }) %>
+    <%- include("./partials/footer") %>

@@ -1,14 +1,12 @@
-<%- include("./partials/header") %>
-
-<script>swingWebViewPlugin.app.login.doAppLogin("<%= user.email.substring(0, user.email.indexOf('@')) %>","<%= user.name.replace(/\d+/g, '') %>"); </script>
+<%- include("./partials/gugocup_header") %>
 
 <div id="page">
-    <div id="footer-bar" class="footer-bar-1">
+    <!-- <div id="footer-bar" class="footer-bar-1">
         <a href="/board"><i class="fa fa-window-restore"></i><span>소식지</span></a>
         <a href="/main"><i class="fa fa-home"></i><span>홈</span></a>
         <a href="/point"><i class="fa fa-star"></i><span>구고포인트</span></a>
         <a href="/gugocup" class="active-nav"><i class="fa fa-futbol"></i><span>구고컵</span></a>
-    </div>  
+    </div>   -->
 
     <div class="header header-fixed header-logo-center">
         <a href="/gugocup" class="header-title">GUGOCUP 2024</a>
@@ -16,7 +14,7 @@
 
     <br><br>
     
-        <div class="card rounded-0" data-card-height="350" style="background-image: url('/gugocup/background.png');">
+        <div class="card rounded-0" data-card-height="350" style="background-image: url('/gugocup/<%= match._id %>/01.jpg');">
             <div class="card-bottom m-3">
                 <span class="bg-highlight px-2 py-1 rounded-xs font-10 font-500">조별 경기</span>
                 <h1 class="color-white font-30 mt-1"><%= match.team1.grade %>학년 <%= match.team1.class %>반 vs <%= match.team2.grade %>학년 <%= match.team2.class %>반</h1>
@@ -195,5 +193,5 @@
         </div>
     </div>
 
-
-    <%- include("./partials/footer", { user }) %>
+    <script type="text/javascript" src="/app/scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/app/scripts/custom.js"></script>

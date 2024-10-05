@@ -1,30 +1,39 @@
-<%- include("./partials/header") %>
-
-<script>swingWebViewPlugin.app.login.doAppLogin("<%= user.email.substring(0, user.email.indexOf('@')) %>","<%= user.name.replace(/\d+/g, '') %>"); </script>
+<%- include("./partials/gugocup_header") %>
 
 <div id="page">
-    <div id="footer-bar" class="footer-bar-1">
+    <!-- <div id="footer-bar" class="footer-bar-1">
         <a href="/board"><i class="fa fa-window-restore"></i><span>소식지</span></a>
         <a href="/main"><i class="fa fa-home"></i><span>홈</span></a>
         <a href="/point"><i class="fa fa-star"></i><span>구고포인트</span></a>
         <a href="/gugocup" class="active-nav"><i class="fa fa-futbol"></i><span>구고컵</span></a>
-    </div>  
+    </div>   -->
 
     <div class="header header-fixed header-logo-center">
         <a href="/gugocup" class="header-title">GUGOCUP 2024</a>
     </div>
     
     <br><br>
-        <div class="card rounded-0" data-card-height="350" style="background-image: url('');">
+        <div class="card rounded-0" data-card-height="350" style="background-image: url('/index/img/guri2.jpg');">
             <div class="card-bottom m-3">
                 <span class="bg-highlight px-2 py-1 rounded-xs font-10 font-500"><%= player.team.grade %>학년 <%= player.team.class %>반</span>
                 <h1 class="color-white font-30 mt-1"><%= player.name %></h1>
                 <p class="color-white opacity-70 pt-3 mb-2 line-height-s">
-                    <%= player.goals %> 골 / <%= player.assists %> 어시스트 <br>
+                    총 득점 : <%= player.goals %> 골 <br>
                     선수 아이디 : <%= player._id %>
                 </p>    
             </div>
             <div class="card-overlay bg-gradient"></div>
+        </div>
+        
+        <div class="card card-style">
+            <div class="content">
+                <h4 class="mb-0 mb-1">선수 정보</h4>
+                <p class="line-height-s">
+                    소속 : 구리고등학교 <%= player.team.grade %>학년 <%= player.team.class %>반<br>
+                    득점 : <%= player.goals %>골<br>
+                </p>
+            </div>
+            <div class="divider mb-0"></div>
         </div>
         <a href="/gugocup/team?id=<%= player.team._id %>">
             <div class="card card-style mb-3">
@@ -39,20 +48,6 @@
                 </div>
             </div>
         </a>
-        
-        <div class="card card-style">
-            <div class="content">
-                <h4 class="mb-0 mb-1">선수 정보</h4>
-                <p class="line-height-s">
-                    소속 : 구리고등학교 <%= player.team.grade %>학년 <%= player.team.class %>반<br>
-                    포지션 : <%= player.position %><br>
-                    득점 : <%= player.goals %>골<br>
-                    어시스트 : <%= player.assists %>회<br>
-                </p>
-            </div>
-            <div class="divider mb-0"></div>
-            
-        </div>
     </div>
     <br><br><br><br>
     <!-- End of Page Content-->
@@ -173,5 +168,5 @@
         </div>
     </div>
 
-
-    <%- include("./partials/footer", { user }) %>
+    <script type="text/javascript" src="/app/scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/app/scripts/custom.js"></script>

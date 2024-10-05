@@ -4,28 +4,7 @@
         <div id="menu-sidebar-right-1" class="menu menu-box-right menu-box-detached menu-sidebar" data-menu-width="310">
             <div class="sidebar-content">
                 <div class="bg-theme mx-3 rounded-m shadow-m my-3">
-                    <div class="d-flex px-2 pb-2 pt-2">
-                        <div class="align-self-center">
-                            <a href="#"><img src="<%= user.picture %>" width="40" class="rounded-sm" alt="img"></a>
-                        </div>
-                        <div class="ps-2 align-self-center">
-                            <h5 class="ps-1 mb-1 pt-1 line-height-xs font-17"><%= user.name.replace(/\d+/g, '') %></h5>
-                            <h6 class="ps-1 mb-0 font-400 opacity-40 font-12"><%= user.email %></h6>
-                        </div>
-                        <div class="ms-auto">
-                            <a href="#" data-bs-toggle="dropdown" class="icon icon-m ps-3"><i class="fa fa-ellipsis-v font-18 color-theme"></i></a>
-                            <div class="dropdown-menu bg-transparent border-0 mb-n5">
-                                <div class="card card-style rounded-m shadow-xl me-1">
-                                    <div class="list-group list-custom-small list-icon-0 px-3 mt-n1">
-                                        <a href="/auth/logout" class="mb-n1">
-                                            <span>로그아웃</span>
-                                            <i class="fa fa-angle-right"></i>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
 
                 <div class="card card-style">
@@ -50,9 +29,14 @@
                                 <span>학생회 문의실</span>
                                 <i class="fa fa-angle-right"></i>
                             </a>
+                            <a href="#" id="gurihs-sns">
+                                <i class="fa font-12 fab fa-instagram gradient-blue rounded-sm color-white"></i>
+                                <span>학생자치회 인스타그램</span>
+                                <i class="fa fa-angle-right"></i>
+                            </a>
                             <a href="#" id="developer-sns">
                                 <i class="fa font-12 fa-code gradient-blue rounded-sm color-white"></i>
-                                <span>개발자 연락처</span>
+                                <span>개발자 인스타그램</span>
                                 <i class="fa fa-angle-right"></i>
                             </a>
                         </div>
@@ -65,7 +49,11 @@
                     });
 
                     document.getElementById('googleform').addEventListener('click', function(event) {
-                        swingWebViewPlugin.app.methods.doExternalOpen('https://test.com');
+                        swingWebViewPlugin.app.methods.doExternalOpen('https://forms.gle/1Hgt5f8qy4GosFQ67');
+                    });
+
+                    document.getElementById('gurihs-sns').addEventListener('click', function(event) {
+                        swingWebViewPlugin.app.methods.doExternalOpen('https://www.instagram.com/guri_hs_official/');
                     });
                 </script>
 

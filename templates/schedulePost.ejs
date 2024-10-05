@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Create Schedule</title>
+</head>
+<body>
+  <h1>Create a New Schedule</h1>
+  <form action="/schedule" method="POST">
+    <label for="date">Date:</label>
+    <input type="date" id="date" name="date" required>
+    
+    <label for="team1">Team 1:</label>
+    <select id="team1" name="team1" required>
+      <% teams.forEach(team => { %>
+        <option value="<%= team._id %>"><%= team.grade %>학년 <%= team.class %>반 (<%= team.group %>조)</option>
+      <% }) %>
+    </select>
+    
+    <label for="team2">Team 2:</label>
+    <select id="team2" name="team2" required>
+      <% teams.forEach(team => { %>
+        <option value="<%= team._id %>"><%= team.grade %>학년 <%= team.class %>반 (<%= team.group %>조)</option>
+      <% }) %>
+    </select>
+
+    <button type="submit">Create Schedule</button>
+  </form>
+</body>
+</html>

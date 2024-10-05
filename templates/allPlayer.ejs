@@ -1,14 +1,12 @@
-<%- include("./partials/header") %>
-
-<script>swingWebViewPlugin.app.login.doAppLogin("<%= user.email.substring(0, user.email.indexOf('@')) %>","<%= user.name.replace(/\d+/g, '') %>"); </script>
+<%- include("./partials/gugocup_header") %>
 
 <div id="page">
-    <div id="footer-bar" class="footer-bar-1">
+    <!-- <div id="footer-bar" class="footer-bar-1">
         <a href="/board"><i class="fa fa-window-restore"></i><span>소식지</span></a>
         <a href="/main"><i class="fa fa-home"></i><span>홈</span></a>
         <a href="/point"><i class="fa fa-star"></i><span>구고포인트</span></a>
         <a href="/gugocup" class="active-nav"><i class="fa fa-futbol"></i><span>구고컵</span></a>
-    </div>  
+    </div>   -->
 
     <div class="header header-fixed header-logo-center">
         <a href="/gugocup" class="header-title">GUGOCUP 2024</a>
@@ -29,19 +27,28 @@
                     <div class="search-results disabled-search-list mt-3">
                         <div class="card card-style mx-0 px-2 p-0 mb-0">
                             <% allPlayer.forEach((player, index) => { %>
-                                <a href="/gugocup/player?id=<%= player._id %>" class="d-flex py-2" data-filter-item data-filter-name="<%= player.team.grade %>학년 <%= player.team.class %>반 <%= player.team.grade %>-<%= player.team.class %> <%= player.name %>">
-                                    <div class="align-self-center">
-                                        <h1 class="pe-3 font-40 font-900 opacity-30"><%= index + 1 %></h1>
+                                <div class="d-flex px-2 mb-3" data-filter-item data-filter-name="<%= player.team.grade %>학년 <%= player.team.class %>반 <%= player.team.grade %>-<%= player.team.class %> <%= player.name %>"">
+                                    <div>
+                                        <div class="align-self-center">
+                                            <h1 class="pe-3 font-40 font-900 opacity-30"><%= index + 1 %></h1>
+                                        </div>
                                     </div>
-                                    <div class="align-self-center">
-                                        <h4 class="mb-n1 font-15"><%= player.team.grade %>학년 <%= player.team.class %>반 <%= player.name %></h4>
-                                        <% if (index < 5) { %> 
-                                            <p class="font-10 px-2 py-1 badge bg-highlight color-white"><%= player.goals %>골 / <%= player.assists %> 어시스트</p>
-                                        <% } else { %>
-                                            <p class="font-10 px-2 py-1 badge bg-gray-dark color-white"><%= player.goals %> 골 / <%= player.assists %> 어시스트</p>
-                                        <% } %>
+                                    <div>
+                                        <div class="align-self-center ms-auto">
+                                            <h4 class="mb-n1 font-15"><%= player.team.grade %>학년 <%= player.team.class %>반 <%= player.name %></h4>
+                                            <% if (index === 0) { %>    
+                                                <p class="font-10 px-2 py-1 badge bg-highlight color-white"><%= player.team.grade %>학년 <%= player.team.class %>반 / <%= player.goals %>골</p>
+                                            <% } else { %>
+                                                <p class="font-10 px-2 py-1 badge bg-gray-dark color-white"><%= player.team.grade %>학년 <%= player.team.class %>반 / <%= player.goals %> 골</p>
+                                            <% } %>
+                                        </div>
                                     </div>
-                                </a>
+                                    <div class="align-self-center ms-auto">
+                                        <a href="/gugocup/player?id=<%= player._id %>" class="btn btn-xs bg-blue-dark rounded-sm text-uppercase font-400">
+                                            자세히 보기
+                                        </a>
+                                    </div>
+                                </div>
                             <% }) %>
                         </div>
                     </div>
@@ -68,20 +75,30 @@
                     </div>
                 </div>
                 <% allPlayer.forEach((player, index) => { %>
-                    <a href="/gugocup/player?id=<%= player._id %>" class="d-flex mb-3">
-                        <div class="align-self-center">
-                            <h1 class="pe-3 font-40 font-900 opacity-30"><%= index + 1 %></h1>
+                    <div class="d-flex px-2 mb-3">
+                        <div>
+                            <div class="align-self-center">
+                                <h1 class="pe-3 font-40 font-900 opacity-30"><%= index + 1 %></h1>
+                            </div>
                         </div>
-                        <div class="align-self-center">
-                            <h4 class="mb-n1 font-15"><%= player.team.grade %>학년 <%= player.team.class %>반 <%= player.name %></h4>
-                            <% if (index < 5) { %>
-                                <p class="font-10 px-2 py-1 badge bg-highlight color-white"><%= player.goals %>골 / <%= player.assists %> 어시스트</p>
-                            <% } else { %>
-                                <p class="font-10 px-2 py-1 badge bg-gray-dark color-white"><%= player.goals %> 골 / <%= player.assists %> 어시스트</p>
-                            <% } %>
+                        <div>
+                            <div class="align-self-center ms-auto">
+                                <h4 class="mb-n1 font-15"><%= player.team.grade %>학년 <%= player.team.class %>반 <%= player.name %></h4>
+                                <% if (index === 0) { %>    
+                                    <p class="font-10 px-2 py-1 badge bg-highlight color-white"><%= player.team.grade %>학년 <%= player.team.class %>반 / <%= player.goals %>골</p>
+                                <% } else { %>
+                                    <p class="font-10 px-2 py-1 badge bg-gray-dark color-white"><%= player.team.grade %>학년 <%= player.team.class %>반 / <%= player.goals %> 골</p>
+                                <% } %>
+                            </div>
                         </div>
-                    </a>
+                        <div class="align-self-center ms-auto">
+                            <a href="/gugocup/player?id=<%= player._id %>" class="btn btn-xs bg-blue-dark rounded-sm text-uppercase font-400">
+                                자세히 보기
+                            </a>
+                        </div>
+                    </div>
                 <% }) %>
+                
                     
 
                 <div class="divider divider-margins"></div>
@@ -207,5 +224,5 @@
         </div>
     </div>
 
-
-    <%- include("./partials/footer", { user }) %>
+    <script type="text/javascript" src="/app/scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/app/scripts/custom.js"></script>

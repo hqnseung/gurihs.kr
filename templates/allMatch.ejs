@@ -1,14 +1,12 @@
-<%- include("./partials/header") %>
-
-<script>swingWebViewPlugin.app.login.doAppLogin("<%= user.email.substring(0, user.email.indexOf('@')) %>","<%= user.name.replace(/\d+/g, '') %>"); </script>
+<%- include("./partials/gugocup_header") %>
 
 <div id="page">
-    <div id="footer-bar" class="footer-bar-1">
+    <!-- <div id="footer-bar" class="footer-bar-1">
         <a href="/board"><i class="fa fa-window-restore"></i><span>소식지</span></a>
         <a href="/main"><i class="fa fa-home"></i><span>홈</span></a>
         <a href="/point"><i class="fa fa-star"></i><span>구고포인트</span></a>
         <a href="/gugocup" class="active-nav"><i class="fa fa-futbol"></i><span>구고컵</span></a>
-    </div>  
+    </div>   -->
 
     <div class="header header-fixed header-logo-center">
         <a href="/gugocup" class="header-title">GUGOCUP 2024</a>
@@ -37,8 +35,7 @@
                                         </div>
                                         <div>
                                             <span class="color-highlight font-300 d-block pt-2 text-uppercase font-10">
-                                                <%= new Date(match.date).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' }) %> - 
-                                                <%= new Date(match.date).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) %>
+                                                <%= new Date(match.date).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' }) %> 점심시간
                                             </span>
                                             
                                             <strong class="color-theme font-16 d-block mt-n2">
@@ -86,8 +83,7 @@
                         </div>
                         <div>
                             <span class="color-highlight font-300 d-block pt-2 text-uppercase font-10">
-                                <%= new Date(match.date).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' }) %> - 
-                                <%= new Date(match.date).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) %>
+                                <%= new Date(match.date).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' }) %> 점심시간
                             </span>
                             
                             <strong class="color-theme font-16 d-block mt-n2">
@@ -232,4 +228,5 @@
     </div>
 
 
-    <%- include("./partials/footer", { user }) %>
+    <script type="text/javascript" src="/app/scripts/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/app/scripts/custom.js"></script>
