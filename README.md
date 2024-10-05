@@ -8,7 +8,7 @@
 ## 배포 주소
 
 > **웹사이트** : [http://gurihs.kr/](http://gurihs.kr/) <br>
-> **웹뷰어플** : 구글 플레이 스토어 / 앱스토어 등록예정<br>
+> **웹뷰어플** : [앱스토어](https://apps.apple.com/hu/app/%EA%B5%AC%EB%A6%AC%EA%B3%A0%EB%93%B1%ED%95%99%EA%B5%90/id6670740192) / [APK 다운로드](https://gurihs.kr/installApp)<br>
 
 ## 개발자 / 기여자
 
