@@ -12,17 +12,9 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 const { OAuth2Strategy: GoogleStrategy } = require('passport-google-oauth');
 
-const User = require("./models/User");
-const Post = require("./models/Post");
-
 const DATABASE_URL = process.env.DATABASE_URL
 const sessionSecret = process.env.sessionSecret
 const startType = process.env.startType
-const Schedule = require('./models/Schedules');
-const Match = require('./models/Match');
-const Team = require('./models/Team');
-const Player = require('./models/Player');
-const Standing = require('./models/standing');
 const renderTemplate = require('./utils/renderTemplate');
 mongoose.set('strictPopulate', false);
 
@@ -71,188 +63,14 @@ passport.use(new GoogleStrategy({
   };
   done(null, user);
 }));
-  
-app.get('/', (req, res) => renderTemplate(res, req, "index.ejs"));
-app.get('/app/privacy', (req, res) => renderTemplate(res, req, "privacy.ejs"));
-app.get('/installApp', (req, res) => renderTemplate(res, req, "installApp.ejs"));
 
 app.use("/", require("./routes/mainRoutes"))
 app.use("/", require("./routes/loginRoutes"))
-// app.use("/", require("./routes/adminRoutes"))
+app.use("/", require("./routes/adminRoutes"))
 app.use("/gugocup", require("./routes/gugocupRoutes"))
 
-app.get('/post', async (req, res) => {
-  if (!req.user) return res.redirect('/login'); 
-
-  const userId = req.user.email.split('@')[0];
-  const user = await User.findOne({ id: userId });
-
-  if (user.role !== "admin") return renderTemplate(res, req, "403.ejs")
-
-  renderTemplate(res, req, "post.ejs", { user: req.user });
-});
-
-app.post('/post', async (req, res) => {
-  if (!req.user) return res.status(400).json({ message: 'Error occurred while processing data' });
-
-  const { title, content, mainPicture } = req.body;
-
-  const newPost = new Post({
-    author: req.user.name.replace(/\d+/g, ''),
-    title,
-    content,
-    mainPicture,
-    view: 0
-  });
-
-  try {
-      await newPost.save();
-      res.redirect("/board")
-  } catch (error) {
-      console.error(error);
-      res.status(500).send('글 작성 중 오류가 발생했습니다.');
-  }
-});
-
-app.get('/matches/new', async (req, res) => {
-  if (!req.user) return res.redirect('/login'); 
-
-  const userId = req.user.email.split('@')[0];
-  const user = await User.findOne({ id: userId });
-
-  if (user.role !== "admin") return renderTemplate(res, req, "403.ejs")
-
-  const teams = await Team.find();
-  renderTemplate(res, req, "matchPost.ejs", { teams });
-});
-
-app.post('/matches', async (req, res) => {
-  if (!req.user) return res.status(400).json({ message: 'Error occurred while processing data' });
-  try {
-    const { date, team1, team2, score1, score2, events } = req.body;
-
-    const scoreTeam1 = parseInt(score1, 10);
-    const scoreTeam2 = parseInt(score2, 10);
-
-    if (isNaN(scoreTeam1) || isNaN(scoreTeam2)) {
-        return res.status(400).send('Invalid score values');
-    }
-
-    const match = new Match({
-        date,
-        team1,
-        team2,
-        score: { team1: scoreTeam1, team2: scoreTeam2 },
-        events
-    });
-
-    await match.save();
-
-    const [team1Standing, team2Standing] = await Promise.all([
-        Standing.findOne({ team: team1 }),
-        Standing.findOne({ team: team2 })
-    ]);
-
-    if (!team1Standing || !team2Standing) {
-        return res.status(404).send('One or both teams not found in standings');
-    }
-
-    if (scoreTeam1 > scoreTeam2) {
-        team1Standing.wins += 1;
-        team2Standing.losses += 1;
-    } else if (scoreTeam1 < scoreTeam2) {
-        team1Standing.losses += 1;
-        team2Standing.wins += 1;
-    } else {
-        team1Standing.draws += 1;
-        team2Standing.draws += 1;
-    }
-
-    team1Standing.played += 1;
-    team2Standing.played += 1;
-    team1Standing.goalsFor += scoreTeam1;
-    team1Standing.goalsAgainst += scoreTeam2;
-    team2Standing.goalsFor += scoreTeam2;
-    team2Standing.goalsAgainst += scoreTeam1;
-
-    team1Standing.points = team1Standing.wins * 3 + team1Standing.draws;
-    team2Standing.points = team2Standing.wins * 3 + team2Standing.draws;
-
-    await Promise.all([
-        team1Standing.save(),
-        team2Standing.save()
-    ]);
-
-    for (const event of events) {
-        const { minute, team, player, eventType, assistsPlayer } = event;
-        const playerDoc = await Player.findOne({ team, name: player });
-        const assistsPlayerDoc = await Player.findOne({ team, name: assistsPlayer });
-
-        if (playerDoc) {
-            if (eventType === 'goal') {
-                playerDoc.goals += 1;
-            } else if (eventType === 'yellow card') {
-                playerDoc.yellowCards += 1;
-            } else if (eventType === 'red card') {
-                playerDoc.redCards += 1;
-            }
-            await playerDoc.save();
-        }
-        if (assistsPlayerDoc) {
-          // assistsPlayerDoc.assists += 1;
-          // await assistsPlayerDoc.save();
-        }
-    }
-
-    res.redirect('/gugocup');
-  } catch (err) {
-      console.error(err);
-      res.status(500).send('Internal Server Error');
-  }
-});
-
-app.get('/schedule/new', async (req, res) => {
-  if (!req.user) return res.redirect('/login');
-
-  const userId = req.user.email.split('@')[0];
-  const user = await User.findOne({ id: userId });
-
-  if (user.role !== "admin") return renderTemplate(res, req, "403.ejs");
-
-  const teams = await Team.find(); // 모든 팀을 가져옴
-  renderTemplate(res, req, "schedulePost.ejs", { teams });
-});
-
-app.post('/schedule', async (req, res) => {
-  if (!req.user) return res.status(400).json({ message: 'Error occurred while processing data' });
-
-  try {
-    const { date, team1, team2 } = req.body;
-
-    const schedule = new Schedule({
-      date,
-      team1,
-      team2
-    });
-
-    await schedule.save();
-    res.redirect('/gugocup/schedule'); // 스케줄이 생성된 후 리다이렉트
-  } catch (err) {
-    console.error(err);
-    res.status(500).send('Internal Server Error');
-  }
-});
-
-
-app.get('/teams/:teamId/players', async (req, res) => {
-  try {
-      const players = await Player.find({ team: req.params.teamId });
-      res.json(players);
-  } catch (err) {
-      console.error(err);
-      res.status(500).send('Server Error');
-  }
-});
+app.get('/app/privacy', (req, res) => renderTemplate(res, req, "privacy.ejs"));
+app.get('/installApp', (req, res) => renderTemplate(res, req, "installApp.ejs"));
 
 app.use((err, req, res, next) => {
   console.error(err);
