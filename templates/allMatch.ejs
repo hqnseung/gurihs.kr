@@ -27,7 +27,7 @@
                     <div class="search-results disabled-search-list mt-3">
                         <div class="card card-style mx-0 px-2 p-0 mb-0">
                             <% allMatches.forEach(match => { %>
-                                <a href="/gugocup/match?id=<%= match._id %>" class="d-flex py-2" data-filter-item data-filter-name="<%= match.team1.grade %>-<%= match.team1.class %> <%= match.team1.grade %>학년 <%= match.team1.class %>반 <%= match.team2.grade %>-<%= match.team2.class %> <%= match.team2.grade %>학년 <%= match.team2.class %>반 <%= new Date(match.date).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' }) %>">
+                                <a href="/gugocup/match/<%= match._id %>" class="d-flex py-2" data-filter-item data-filter-name="<%= match.team1.grade %>-<%= match.team1.class %> <%= match.team1.grade %>학년 <%= match.team1.class %>반 <%= match.team2.grade %>-<%= match.team2.class %> <%= match.team2.grade %>학년 <%= match.team2.class %>반 <%= new Date(match.date).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' }) %>">
                                     <div class="d-flex px-2 mb-3">
                                         <div>
                                             <img src="https://imgdb.net/storage/uploads/7c4fcf3bd2b218eb9c3e9694040290e7f8a94d0ad89e32aa3ce6eb0760e17baf.png" 
@@ -97,7 +97,7 @@
                             </span>
                         </div>
                         <div class="align-self-center ms-auto">
-                            <a href="/gugocup/match?id=<%= match._id %>" class="btn btn-xs bg-blue-dark rounded-sm text-uppercase font-400">
+                            <a href="/gugocup/match/<%= match._id %>" class="btn btn-xs bg-blue-dark rounded-sm text-uppercase font-400">
                                 자세히 보기
                             </a>
                         </div>
