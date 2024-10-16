@@ -8,7 +8,6 @@ const path = require("path");
 const ejs = require("ejs");
 const https = require("https");
 const bodyParser = require('body-parser');
-const { default: axios } = require("axios");
 const mongoose = require('mongoose');
 const passport = require('passport');
 const { OAuth2Strategy: GoogleStrategy } = require('passport-google-oauth');
@@ -24,6 +23,7 @@ const Match = require('./models/Match');
 const Team = require('./models/Team');
 const Player = require('./models/Player');
 const Standing = require('./models/standing');
+const renderTemplate = require('./utils/renderTemplate');
 mongoose.set('strictPopulate', false);
 
 const app = express();
@@ -72,106 +72,111 @@ passport.use(new GoogleStrategy({
   done(null, user);
 }));
 
-const renderTemplate = (res, req, template, data = {}) => {
-  res.render(path.resolve(`${templateDir}${path.sep}${template}`), { ...data });
-};
+// const renderTemplate = (res, req, template, data = {}) => {
+//   res.render(path.resolve(`${templateDir}${path.sep}${template}`), { ...data });
+// };
 
-const fullPattern = /^\d{2}_stu\d{4}@guri\.hs\.kr$/;
-const domainPattern = /@guri\.hs\.kr$/;
+// const fullPattern = /^\d{2}_stu\d{4}@guri\.hs\.kr$/;
+// const domainPattern = /@guri\.hs\.kr$/;
 
-app.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
-app.get('/auth/google/callback', 
-  passport.authenticate('google', { failureRedirect: '/login' }),
-  async (req, res) => {
-    const email = req.user.email;
+// app.get('/auth/google', passport.authenticate('google', { scope: ['email', 'profile'] }));
+// app.get('/auth/google/callback', 
+//   passport.authenticate('google', { failureRedirect: '/login' }),
+//   async (req, res) => {
+//     const email = req.user.email;
 
-    if (fullPattern.test(email)) {
-      const id = email.split('@')[0];
-      const name = req.user.name.replace(/\d+/g, '');
-      if (!(await User.findOne({ id }))) {
-        await User.create({ id, name, point: 0 });
-      }
-      res.redirect('/main');
+//     if (fullPattern.test(email)) {
+//       const id = email.split('@')[0];
+//       const name = req.user.name.replace(/\d+/g, '');
+//       if (!(await User.findOne({ id }))) {
+//         await User.create({ id, name, point: 0 });
+//       }
+//       res.redirect('/main');
 
-    } else if (domainPattern.test(email)) {
-      const id = email.split('@')[0];
-      const name = req.user.name.replace(/\d+/g, '');
-      if (!(await User.findOne({ id }))) {
-        await User.create({ id, name, point: 0, role: "teacher" });
-      }
-      res.redirect('/main');
+//     } else if (domainPattern.test(email)) {
+//       const id = email.split('@')[0];
+//       const name = req.user.name.replace(/\d+/g, '');
+//       if (!(await User.findOne({ id }))) {
+//         await User.create({ id, name, point: 0, role: "teacher" });
+//       }
+//       res.redirect('/main');
 
-    } else {
-      req.logout(err => {
-        if (err) return next(err);
-        renderTemplate(res, req, "login.ejs", { status: "fail" });
-      });
-    }
-  }
-);
+//     } else {
+//       req.logout(err => {
+//         if (err) return next(err);
+//         renderTemplate(res, req, "login.ejs", { status: "fail" });
+//       });
+//     }
+//   }
+// );
   
 app.get('/', (req, res) => renderTemplate(res, req, "index.ejs"));
 app.get('/app/privacy', (req, res) => renderTemplate(res, req, "privacy.ejs"));
 app.get('/installApp', (req, res) => renderTemplate(res, req, "installApp.ejs"));
 
+app.use("/", require("./routes/mainRoutes"))
+app.use("/", require("./routes/loginRoutes"))
+app.use("/", require("./routes/adminRoutes"))
+app.use("/gugocup", require("./routes/gugocupRoutes"))
 
-app.get('/login', (req, res) => {
-  req.user ? res.redirect('/main') : renderTemplate(res, req, "login.ejs", { status: "ok" });
-});
 
-function formatDate(date) {
-  const year = date.getFullYear();
-  const month = (date.getMonth() + 1).toString().padStart(2, '0');
-  const day = date.getDate().toString().padStart(2, '0');
-  return `${year}${month}${day}`;
-}
+// app.get('/login', (req, res) => {
+//   req.user ? res.redirect('/main') : renderTemplate(res, req, "login.ejs", { status: "ok" });
+// });
 
-function formatDateForDisplay(date) {
-  const month = (date.getMonth() + 1).toString();
-  const day = date.getDate().toString();
-  return `${month}월 ${day}일`;
-}
+// function formatDate(date) {
+//   const year = date.getFullYear();
+//   const month = (date.getMonth() + 1).toString().padStart(2, '0');
+//   const day = date.getDate().toString().padStart(2, '0');
+//   return `${year}${month}${day}`;
+// }
 
-app.get('/main', async (req, res) => {
-  // if (!req.user) return res.redirect('/login');
-  // const user = req.user
+// function formatDateForDisplay(date) {
+//   const month = (date.getMonth() + 1).toString();
+//   const day = date.getDate().toString();
+//   return `${month}월 ${day}일`;
+// }
 
-  const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
-  const url = `https://open.neis.go.kr/hub/mealServiceDietInfo?Type=json&pIndex=1&pSize=100&ATPT_OFCDC_SC_CODE=J10&SD_SCHUL_CODE=7530054&KEY=6b2c5a8bd8284662bf5be43ffb875dc4&MLSV_YMD=${date}`;
+// app.get('/main', async (req, res) => {
+//   // if (!req.user) return res.redirect('/login');
+//   // const user = req.user
+
+//   const date = new Date().toISOString().split('T')[0].replace(/-/g, '');
+//   const url = `https://open.neis.go.kr/hub/mealServiceDietInfo?Type=json&pIndex=1&pSize=100&ATPT_OFCDC_SC_CODE=J10&SD_SCHUL_CODE=7530054&KEY=6b2c5a8bd8284662bf5be43ffb875dc4&MLSV_YMD=${date}`;
   
-  let currentDate = new Date();
+//   let currentDate = new Date();
   
-  const fetchLunchInfo = async () => {
-    let lunch = "오늘의 급식정보가 존재하지 않습니다.";
-    let attempts = 0;
-    let foundDate = formatDateForDisplay(currentDate);
+//   const fetchLunchInfo = async () => {
+//     let lunch = "오늘의 급식정보가 존재하지 않습니다.";
+//     let attempts = 0;
+//     let foundDate = formatDateForDisplay(currentDate);
   
-    while (attempts < 4) {
-      try {
-        const urlWithDate = url.replace(date, formatDate(currentDate));
-        const response = await axios.get(urlWithDate);
-        if (response.data.RESULT && response.data.RESULT.CODE === "INFO-200") {
-          attempts++;
-          currentDate.setDate(currentDate.getDate() + 1);
-          foundDate = formatDateForDisplay(currentDate); 
-        } else {
-          const data = response.data;
-          const ddishNm = data.mealServiceDietInfo[1].row[0].DDISH_NM;
-          lunch = ddishNm;
-          foundDate = formatDateForDisplay(currentDate);
-          break;
-        }
-      } catch (error) {
-          console.error("Error fetching the lunch menu:", error);
-          break;
-      }
-    }
+//     while (attempts < 4) {
+//       try {
+//         const urlWithDate = url.replace(date, formatDate(currentDate));
+//         const response = await axios.get(urlWithDate);
+//         if (response.data.RESULT && response.data.RESULT.CODE === "INFO-200") {
+//           attempts++;
+//           currentDate.setDate(currentDate.getDate() + 1);
+//           foundDate = formatDateForDisplay(currentDate); 
+//         } else {
+//           const data = response.data;
+//           const ddishNm = data.mealServiceDietInfo[1].row[0].DDISH_NM;
+//           lunch = ddishNm;
+//           foundDate = formatDateForDisplay(currentDate);
+//           break;
+//         }
+//       } catch (error) {
+//           console.error("Error fetching the lunch menu:", error);
+//           break;
+//       }
+//     }
   
-    renderTemplate(res, req, "main.ejs", { lunch, date: foundDate });
-  };
+//     renderTemplate(res, req, "main.ejs", { lunch, date: foundDate });
+//   };
   
-  fetchLunchInfo();
-});
+//   fetchLunchInfo();
+// });
 
 
 app.get('/post', async (req, res) => {
@@ -347,164 +352,161 @@ app.get('/teams/:teamId/players', async (req, res) => {
   }
 });
 
-app.get('/gugocup', async (req, res) => {
-  // if (!req.user) return res.redirect('/login'); 
-  // console.log(req)
-  if (!req.rawHeaders.join(' ').includes('WebView') || req.rawHeaders.join(' ').includes('kakao') || req.rawHeaders.join(' ').includes('Instagram')) return res.redirect("/installApp")
+// app.get('/gugocup', async (req, res) => {
+//   if (!req.rawHeaders.join(' ').includes('WebView') || req.rawHeaders.join(' ').includes('kakao') || req.rawHeaders.join(' ').includes('Instagram')) return res.redirect("/installApp")
 
-  const startOfDay = new Date();
-  startOfDay.setHours(0, 0, 0, 0);
-  const endOfDay = new Date();
-  endOfDay.setHours(23, 59, 59, 999);
+//   const startOfDay = new Date();
+//   startOfDay.setHours(0, 0, 0, 0);
+//   const endOfDay = new Date();
+//   endOfDay.setHours(23, 59, 59, 999);
   
-  let todaySchedule;
+//   let todaySchedule;
   
-  Schedule.find({
-      date: {
-          $gte: startOfDay,
-          $lt: endOfDay 
-      }
-  })
-  .populate('team1')
-  .populate('team2')
-  .then(schedules => {
-      todaySchedule = schedules;
-  })
+//   Schedule.find({
+//       date: {
+//           $gte: startOfDay,
+//           $lt: endOfDay 
+//       }
+//   })
+//   .populate('team1')
+//   .populate('team2')
+//   .then(schedules => {
+//       todaySchedule = schedules;
+//   })
   
-  const matches = await Match.find();
-  const allTeams = await Team.find().populate('standing');
+//   const matches = await Match.find();
+//   const allTeams = await Team.find().populate('standing');
 
-  const standings = await Standing.find()
-  .populate('team')
-  .exec();
+//   const standings = await Standing.find()
+//   .populate('team')
+//   .exec();
 
-  const groupedStandings = standings.reduce((acc, standing) => {
-    const group = standing.team.group;
-    if (!acc[group]) {
-        acc[group] = [];
-    }
-    acc[group].push(standing);
-    return acc;
-  }, {});
+//   const groupedStandings = standings.reduce((acc, standing) => {
+//     const group = standing.team.group;
+//     if (!acc[group]) {
+//         acc[group] = [];
+//     }
+//     acc[group].push(standing);
+//     return acc;
+//   }, {});
 
-  for (const group in groupedStandings) {
-      groupedStandings[group].sort((a, b) => b.points - a.points);
-  }
+//   for (const group in groupedStandings) {
+//       groupedStandings[group].sort((a, b) => b.points - a.points);
+//   }
 
-  const allPlayers = await Player.find().sort({ goals: -1 }).limit(5).populate('team');  
-  const allMatches = (await Match.find().populate('team1').populate('team2')).sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 3);
+//   const allPlayers = await Player.find().sort({ goals: -1 }).limit(5).populate('team');  
+//   const allMatches = (await Match.find().populate('team1').populate('team2')).sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 3);
   
-  // renderTemplate(res, req, "gugocup.ejs", { user: req.user, todaySchedule, matches, allTeams, allMatches, allPlayers, groupedStandings });
-  renderTemplate(res, req, "gugocup.ejs", { todaySchedule, matches, allTeams, allMatches, allPlayers, groupedStandings });
+//   // renderTemplate(res, req, "gugocup.ejs", { user: req.user, todaySchedule, matches, allTeams, allMatches, allPlayers, groupedStandings });
+//   renderTemplate(res, req, "gugocup.ejs", { todaySchedule, matches, allTeams, allMatches, allPlayers, groupedStandings });
 
-});
+// });
 
-app.get('/gugocup/team', async (req, res) => {
-  // if (!req.user) return res.redirect('/login');
-  if (!req.rawHeaders.join(' ').includes('WebView') || req.rawHeaders.join(' ').includes('kakao') || req.rawHeaders.join(' ').includes('Instagram')) return res.redirect("/installApp")
-  const id = req.query.id
+// app.get('/gugocup/team', async (req, res) => {
+//   // if (!req.user) return res.redirect('/login');
+//   if (!req.rawHeaders.join(' ').includes('WebView') || req.rawHeaders.join(' ').includes('kakao') || req.rawHeaders.join(' ').includes('Instagram')) return res.redirect("/installApp")
+//   const id = req.query.id
 
-  if (id && id.match(/^[0-9a-fA-F]{24}$/) && await Team.findById(id)) {
-    const team = await Team.findById(id)
-    const standing = await Standing.findOne({ team: id })
+//   if (id && id.match(/^[0-9a-fA-F]{24}$/) && await Team.findById(id)) {
+//     const team = await Team.findById(id)
+//     const standing = await Standing.findOne({ team: id })
 
-    const group = team.group;
-    const teamIds = (await Team.find({ group }).select('_id')).map(t => t._id);
-    const standings = await Standing.find({ team: { $in: teamIds } })
-        .populate('team')
-        .sort({ points: -1 })
-        .exec();
-    const rank = standings.findIndex(standing => standing.team._id.toString() === id) + 1;
+//     const group = team.group;
+//     const teamIds = (await Team.find({ group }).select('_id')).map(t => t._id);
+//     const standings = await Standing.find({ team: { $in: teamIds } })
+//         .populate('team')
+//         .sort({ points: -1 })
+//         .exec();
+//     const rank = standings.findIndex(standing => standing.team._id.toString() === id) + 1;
 
-    const matches = await Match.find({
-      $or: [{ team1: id }, { team2: id }]
-    })
-    .populate('team1')
-    .populate('team2')
-    .exec();
+//     const matches = await Match.find({
+//       $or: [{ team1: id }, { team2: id }]
+//     })
+//     .populate('team1')
+//     .populate('team2')
+//     .exec();
 
-    const players = await Player.find({ team: id });
+//     const players = await Player.find({ team: id });
 
-    // renderTemplate(res, req, "team.ejs", { team, standing, user: req.user, rank, matches, players });
-    renderTemplate(res, req, "team.ejs", { team, standing, rank, matches, players });
-  } else {
-    const allTeam = await Team.find()
-    // renderTemplate(res, req, "allTeam.ejs", { user: req.user, allTeam });
-    renderTemplate(res, req, "allTeam.ejs", { allTeam });
-  }
-});
+//     // renderTemplate(res, req, "team.ejs", { team, standing, user: req.user, rank, matches, players });
+//     renderTemplate(res, req, "team.ejs", { team, standing, rank, matches, players });
+//   } else {
+//     const allTeam = await Team.find()
+//     // renderTemplate(res, req, "allTeam.ejs", { user: req.user, allTeam });
+//     renderTemplate(res, req, "allTeam.ejs", { allTeam });
+//   }
+// });
 
+// app.get('/gugocup/player', async (req, res) => {
+//   if (!req.rawHeaders.join(' ').includes('WebView') || req.rawHeaders.join(' ').includes('kakao') || req.rawHeaders.join(' ').includes('Instagram')) return res.redirect("/installApp")
+//   // if (!req.user) return res.redirect('/login');
+//   const id = req.query.id
 
-app.get('/gugocup/player', async (req, res) => {
-  if (!req.rawHeaders.join(' ').includes('WebView') || req.rawHeaders.join(' ').includes('kakao') || req.rawHeaders.join(' ').includes('Instagram')) return res.redirect("/installApp")
-  // if (!req.user) return res.redirect('/login');
-  const id = req.query.id
+//   if (id && id.match(/^[0-9a-fA-F]{24}$/) && await Player.findById(id)) {
+//     const player = await Player.findById(id).populate('team')
 
-  if (id && id.match(/^[0-9a-fA-F]{24}$/) && await Player.findById(id)) {
-    const player = await Player.findById(id).populate('team')
+//     // renderTemplate(res, req, "player.ejs", { player, user: req.user });
+//     renderTemplate(res, req, "player.ejs", { player });
+//   } else {
+//     const allPlayer = await Player.find().sort({ goals: -1 }).populate('team')
+//     // renderTemplate(res, req, "allPlayer.ejs", { user: req.user, allPlayer });
+//     renderTemplate(res, req, "allPlayer.ejs", { allPlayer });
+//   }
+// });
 
-    // renderTemplate(res, req, "player.ejs", { player, user: req.user });
-    renderTemplate(res, req, "player.ejs", { player });
-  } else {
-    const allPlayer = await Player.find().sort({ goals: -1 }).populate('team')
-    // renderTemplate(res, req, "allPlayer.ejs", { user: req.user, allPlayer });
-    renderTemplate(res, req, "allPlayer.ejs", { allPlayer });
-  }
-});
+// app.get('/gugocup/match', async (req, res) => {
+//   if (!req.rawHeaders.join(' ').includes('WebView') || req.rawHeaders.join(' ').includes('kakao') || req.rawHeaders.join(' ').includes('Instagram')) return res.redirect("/installApp")
+//   // if (!req.user) return res.redirect('/login');
+//   const id = req.query.id
 
-app.get('/gugocup/match', async (req, res) => {
-  if (!req.rawHeaders.join(' ').includes('WebView') || req.rawHeaders.join(' ').includes('kakao') || req.rawHeaders.join(' ').includes('Instagram')) return res.redirect("/installApp")
-  // if (!req.user) return res.redirect('/login');
-  const id = req.query.id
+//   if (id && id.match(/^[0-9a-fA-F]{24}$/) && await Match.findById(id)) {
+//     const match = await Match.findById(id).populate('team1').populate('team2');
 
-  if (id && id.match(/^[0-9a-fA-F]{24}$/) && await Match.findById(id)) {
-    const match = await Match.findById(id).populate('team1').populate('team2');
+//     // renderTemplate(res, req, "match.ejs", { match, user: req.user });
+//     renderTemplate(res, req, "match.ejs", { match });
+//   } else {
+//     const allMatches = (await Match.find().populate('team1').populate('team2')).sort((a, b) => new Date(b.date) - new Date(a.date));
+//     // renderTemplate(res, req, "allMatch.ejs", { user: req.user, allMatches });
+//     renderTemplate(res, req, "allMatch.ejs", { allMatches });
+//   }
+// });
 
-    // renderTemplate(res, req, "match.ejs", { match, user: req.user });
-    renderTemplate(res, req, "match.ejs", { match });
-  } else {
-    const allMatches = (await Match.find().populate('team1').populate('team2')).sort((a, b) => new Date(b.date) - new Date(a.date));
-    // renderTemplate(res, req, "allMatch.ejs", { user: req.user, allMatches });
-    renderTemplate(res, req, "allMatch.ejs", { allMatches });
-  }
-});
+// app.get('/gugocup/schedule', async (req, res) => {
+//   if (!req.rawHeaders.join(' ').includes('WebView') || req.rawHeaders.join(' ').includes('kakao') || req.rawHeaders.join(' ').includes('Instagram')) return res.redirect("/installApp")
+//   // if (!req.user) return res.redirect('/login');
+//   const id = req.query.id
 
-app.get('/gugocup/schedule', async (req, res) => {
-  if (!req.rawHeaders.join(' ').includes('WebView') || req.rawHeaders.join(' ').includes('kakao') || req.rawHeaders.join(' ').includes('Instagram')) return res.redirect("/installApp")
-  // if (!req.user) return res.redirect('/login');
-  const id = req.query.id
+//   if (id && id.match(/^[0-9a-fA-F]{24}$/) && await Schedule.findById(id)) {
+//     const schedule = await Schedule.findById(id);
+//     // renderTemplate(res, req, "schedule.ejs", { schedule, user: req.user });
+//     renderTemplate(res, req, "schedule.ejs", { schedule });
+//   } else {
+//     const today = new Date();
+//     const allSchedule = await Schedule.find({ date: { $gte: today } }) .populate('team1').populate('team2').sort({ date: +1 }).exec();
+//     // renderTemplate(res, req, "allSchedule.ejs", { user: req.user, allSchedule });
+//     renderTemplate(res, req, "allSchedule.ejs", { allSchedule });
+//   }
+// });
 
-  if (id && id.match(/^[0-9a-fA-F]{24}$/) && await Schedule.findById(id)) {
-    const schedule = await Schedule.findById(id);
-    // renderTemplate(res, req, "schedule.ejs", { schedule, user: req.user });
-    renderTemplate(res, req, "schedule.ejs", { schedule });
-  } else {
-    const today = new Date();
-    const allSchedule = await Schedule.find({ date: { $gte: today } }) .populate('team1').populate('team2').sort({ date: +1 }).exec();
-    // renderTemplate(res, req, "allSchedule.ejs", { user: req.user, allSchedule });
-    renderTemplate(res, req, "allSchedule.ejs", { allSchedule });
-  }
-});
-
-app.get('/board', async (req, res) => {                               
-  // if (!req.user) return res.redirect('/login');                     
-  const id = req.query.id                                         
+// app.get('/board', async (req, res) => {                               
+//   // if (!req.user) return res.redirect('/login');                     
+//   const id = req.query.id                                         
                                                               
-  if (id && id.match(/^[0-9a-fA-F]{24}$/) && await Post.findById(id)) {
-    const post = await Post.findById(id);
-    renderTemplate(res, req, "view.ejs", { post });
-  } else {
-    const postList = await Post.find();
-    renderTemplate(res, req, "board.ejs", { postList });
-  }
-});
+//   if (id && id.match(/^[0-9a-fA-F]{24}$/) && await Post.findById(id)) {
+//     const post = await Post.findById(id);
+//     renderTemplate(res, req, "view.ejs", { post });
+//   } else {
+//     const postList = await Post.find();
+//     renderTemplate(res, req, "board.ejs", { postList });
+//   }
+// });
 
-app.get('/auth/logout', (req, res, next) => {
-  req.logout(err => {
-    if (err) return next(err);
-    res.redirect('/login');
-  });
-});
+// app.get('/auth/logout', (req, res, next) => {
+//   req.logout(err => {
+//     if (err) return next(err);
+//     res.redirect('/login');
+//   });
+// });
 
 app.use((err, req, res, next) => {
   console.error(err);
