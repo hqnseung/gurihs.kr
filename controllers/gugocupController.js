@@ -3,6 +3,7 @@ const Team = require("../models/Team");
 const Match = require("../models/Match");
 const Player = require("../models/Player");
 const renderTemplate = require("../utils/renderTemplate");
+const Schedule = require("../models/Schedules");
 
 // @desc View main gugocup page
 // @route GET /gugocup
@@ -63,6 +64,7 @@ const getGugocup_TeamsPage = async (req, res) => {
 // @desc Get Team
 // @route GET /gugocup/team/:id
 const getGugocup_TeamPage = async (req, res) => {
+    const id = req.params.id
     if (id && id.match(/^[0-9a-fA-F]{24}$/) && await Team.findById(id)) {
         const team = await Team.findById(id)
         const standing = await Standing.findOne({ team: id })
@@ -100,13 +102,13 @@ const getGugocup_PlayersPage = async (req, res) => {
 // @desc Get Player
 // @route GET /gugocup/player/:id
 const getGugocup_PlayerPage = async (req, res) => {
-    const id = req.query.id
-    if (id && id.match(/^[0-9a-fA-F]{24}$/) && await Player.findById(id)) {
+    const id = req.params.id
+    // if (id && id.match(/^[0-9a-fA-F]{24}$/) && await Player.findById(id)) {
         const player = await Player.findById(id).populate('team')
         renderTemplate(res, req, "player.ejs", { player });
-    } else {
-        res.redirect("/player")
-    }
+    // } else {
+    //     res.redirect("/player")
+    // }
 }
 
 // @desc View All Matches
@@ -119,7 +121,7 @@ const getGugocup_MatchesPage = async (req, res) => {
 // @desc Get Match
 // @route GET /gugocup/match/:id
 const getGugocup_MatchPage = async (req, res) => {
-    const id = req.query.id
+    const id = req.params.id
     if (id && id.match(/^[0-9a-fA-F]{24}$/) && await Match.findById(id)) {
         const match = await Match.findById(id).populate('team1').populate('team2');
         renderTemplate(res, req, "match.ejs", { match });

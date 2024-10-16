@@ -12,3 +12,5 @@ router.route("/board")
   .get(checkIsApp, getBoardPage)
 router.route("/board/:id")
   .get(checkIsApp, getPostPage)
+
+module.exports = router

@@ -116,7 +116,7 @@ app.get('/installApp', (req, res) => renderTemplate(res, req, "installApp.ejs"))
 
 app.use("/", require("./routes/mainRoutes"))
 app.use("/", require("./routes/loginRoutes"))
-app.use("/", require("./routes/adminRoutes"))
+// app.use("/", require("./routes/adminRoutes"))
 app.use("/gugocup", require("./routes/gugocupRoutes"))
 
 

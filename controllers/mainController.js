@@ -1,5 +1,7 @@
+const axios = require('axios');
 const renderTemplate = require("../utils/renderTemplate");
 const { formatDate, formatDateForDisplay } = require("../utils/utils");
+const Post = require('../models/Post');
 
 // @desc View Main Page
 // @route GET /main
@@ -51,7 +53,7 @@ const getBoardPage = async (req, res) => {
 // @desc View Post
 // @route GET /board/:id
 const getPostPage = async (req, res) => {
-    const id = req.query.id                                                         
+    const id = req.params.id                                                         
     if (id && id.match(/^[0-9a-fA-F]{24}$/) && await Post.findById(id)) {
         const post = await Post.findById(id);
         renderTemplate(res, req, "view.ejs", { post });

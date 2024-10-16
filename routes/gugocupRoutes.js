@@ -28,3 +28,5 @@ router.route("/match/:id")
 // @desc Get Schedule
 router.route("/schedule") 
   .get(checkIsApp, getGugocup_SchedulesPage)
+
+module.exports = router
