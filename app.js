@@ -72,7 +72,7 @@ app.use("/gugocup", require("./routes/gugocupRoutes"))
 app.get('/app/privacy', (req, res) => renderTemplate(res, req, "privacy.ejs"));
 app.get('/installApp', (req, res) => renderTemplate(res, req, "installApp.ejs"));
 
-app.get('api/statistics', (req, res) => {
+app.get('/api/statistics', (req, res) => {
   fs.readFile("../api.json", 'utf8', (err, data) => {
     if (err) {
         console.error('파일 읽기 중 오류 발생:', err);
