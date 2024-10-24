@@ -90,8 +90,9 @@ const createMatch = async (req, res) => {
         team2Standing.goalsFor += scoreTeam2;
         team2Standing.goalsAgainst += scoreTeam1;
     
-        team1Standing.points = team1Standing.wins * 3 + team1Standing.draws;
-        team2Standing.points = team2Standing.wins * 3 + team2Standing.draws;
+        // 예선 끝나서 주석해둠
+        // team1Standing.points = team1Standing.wins * 3 + team1Standing.draws;
+        // team2Standing.points = team2Standing.wins * 3 + team2Standing.draws;
     
         await Promise.all([
             team1Standing.save(),
@@ -113,8 +114,6 @@ const createMatch = async (req, res) => {
                 await playerDoc.save();
             }
         }
-    
-        res.redirect('/gugocup');
       } catch (err) {
           console.error(err);
           res.status(500).send('Internal Server Error');
@@ -141,7 +140,6 @@ const createSchedule = async (req, res) => {
         });
     
         await schedule.save();
-        res.redirect('/gugocup/schedule');
     } catch (err) {
         console.error(err);
         res.status(500).send('Internal Server Error');
