@@ -30,7 +30,7 @@
                                 <a href="/gugocup/match/<%= match._id %>" class="d-flex py-2" data-filter-item data-filter-name="<%= match.team1.grade %>-<%= match.team1.class %> <%= match.team1.grade %>학년 <%= match.team1.class %>반 <%= match.team2.grade %>-<%= match.team2.class %> <%= match.team2.grade %>학년 <%= match.team2.class %>반 <%= new Date(match.date).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' }) %>">
                                     <div class="d-flex px-2 mb-3">
                                         <div>
-                                            <img src="https://imgdb.net/storage/uploads/7c4fcf3bd2b218eb9c3e9694040290e7f8a94d0ad89e32aa3ce6eb0760e17baf.png" 
+                                            <img src="/gugocup/logo_gray.png" 
                                                 class="rounded-sm me-3 mt-3" width="55">
                                         </div>
                                         <div>
@@ -78,7 +78,7 @@
                 <% allMatches.forEach(match => { %>
                     <div class="d-flex px-2 mb-3">
                         <div>
-                            <img src="https://imgdb.net/storage/uploads/7c4fcf3bd2b218eb9c3e9694040290e7f8a94d0ad89e32aa3ce6eb0760e17baf.png" 
+                            <img src="/gugocup/logo_gray.png" 
                                 class="rounded-sm me-3 mt-3" width="55">
                         </div>
                         <div>

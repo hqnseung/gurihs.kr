@@ -7,52 +7,51 @@ const Schedule = require("../models/Schedules");
 
 // @desc View main gugocup page
 // @route GET /gugocup
-    const getGugocup_MainPage = async (req, res) => {
+const getGugocup_MainPage = async (req, res) => {
 
     const startOfDay = new Date();
     startOfDay.setHours(0, 0, 0, 0);
     const endOfDay = new Date();
     endOfDay.setHours(23, 59, 59, 999);
     
-    let todaySchedule;
-    
-    Schedule.find({
-        date: {
-            $gte: startOfDay,
-            $lt: endOfDay 
-        }
-    })
-    .populate('team1')
-    .populate('team2')
-    .then(schedules => {
-        todaySchedule = schedules;
-    })
-    
-    const matches = await Match.find();
-    const allTeams = await Team.find().populate('standing');
-    
-    const standings = await Standing.find()
-    .populate('team')
-    .exec();
-    
+    const [todaySchedule, matches, allTeams, standings, allPlayers, allMatches] = await Promise.all([
+        Schedule.find({
+            date: { $gte: startOfDay, $lt: endOfDay }
+        })
+        .populate('team1')
+        .populate('team2'),
+
+        Match.find(),
+
+        Team.find().populate('standing'),
+
+        Standing.find().populate('team').exec(),
+
+        Player.find().sort({ goals: -1 }).limit(5).populate('team'),
+
+        Match.find()
+        .populate('team1')
+        .populate('team2')
+        .sort({ date: -1 })
+        .limit(3)
+    ]);
+
     const groupedStandings = standings.reduce((acc, standing) => {
-      const group = standing.team.group;
-      if (!acc[group]) {
-          acc[group] = [];
-      }
-      acc[group].push(standing);
-      return acc;
+        const group = standing.team.group;
+        if (!acc[group]) {
+            acc[group] = [];
+        }
+        acc[group].push(standing);
+        return acc;
     }, {});
-    
+
     for (const group in groupedStandings) {
         groupedStandings[group].sort((a, b) => b.points - a.points);
     }
-    
-    const allPlayers = await Player.find().sort({ goals: -1 }).limit(5).populate('team');  
-    const allMatches = (await Match.find().populate('team1').populate('team2')).sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 3);
-    
-    renderTemplate(res, req, "gugocup.ejs", { todaySchedule, matches, allTeams, allMatches, allPlayers, groupedStandings });      
+
+    renderTemplate(res, req, "gugocup.ejs", { todaySchedule, matches, allTeams, allMatches, allPlayers, groupedStandings });
 }
+
 
 // @desc View All Teams
 // @route GET /gugocup/team
@@ -64,33 +63,42 @@ const getGugocup_TeamsPage = async (req, res) => {
 // @desc Get Team
 // @route GET /gugocup/team/:id
 const getGugocup_TeamPage = async (req, res) => {
-    const id = req.params.id
-    if (id && id.match(/^[0-9a-fA-F]{24}$/) && await Team.findById(id)) {
-        const team = await Team.findById(id)
-        const standing = await Standing.findOne({ team: id })
+    const id = req.params.id;
+    
+    if (id && id.match(/^[0-9a-fA-F]{24}$/)) {
+        const team = await Team.findById(id);
+        if (team) {
+            const [standing, standings, matches, players] = await Promise.all([
+                Standing.findOne({ team: id }),
+                
+                (async () => {
+                    const group = team.group;
+                    const teamIds = (await Team.find({ group }).select('_id')).map(t => t._id);
+                    return Standing.find({ team: { $in: teamIds } })
+                        .populate('team')
+                        .sort({ points: -1 })
+                        .exec();
+                })(),
+                
+                Match.find({
+                    $or: [{ team1: id }, { team2: id }]
+                })
+                .populate('team1')
+                .populate('team2')
+                .exec(),
+                
+                Player.find({ team: id })
+            ]);
 
-        const group = team.group;
-        const teamIds = (await Team.find({ group }).select('_id')).map(t => t._id);
-        const standings = await Standing.find({ team: { $in: teamIds } })
-            .populate('team')
-            .sort({ points: -1 })
-            .exec();
-        const rank = standings.findIndex(standing => standing.team._id.toString() === id) + 1;
+            const rank = standings.findIndex(standing => standing.team._id.toString() === id) + 1;
 
-        const matches = await Match.find({
-            $or: [{ team1: id }, { team2: id }]
-        })
-        .populate('team1')
-        .populate('team2')
-        .exec();
-
-        const players = await Player.find({ team: id });
-
-        renderTemplate(res, req, "team.ejs", { team, standing, rank, matches, players });
-    } else {
-        res.redirect("/team")
+            return renderTemplate(res, req, "team.ejs", { team, standing, rank, matches, players });
+        }
     }
+    
+    res.redirect("/team");
 }
+
 
 // @desc View All Players
 // @route GET /gugocup/player
@@ -103,12 +111,8 @@ const getGugocup_PlayersPage = async (req, res) => {
 // @route GET /gugocup/player/:id
 const getGugocup_PlayerPage = async (req, res) => {
     const id = req.params.id
-    // if (id && id.match(/^[0-9a-fA-F]{24}$/) && await Player.findById(id)) {
-        const player = await Player.findById(id).populate('team')
-        renderTemplate(res, req, "player.ejs", { player });
-    // } else {
-    //     res.redirect("/player")
-    // }
+    const player = await Player.findById(id).populate('team')
+    renderTemplate(res, req, "player.ejs", { player });
 }
 
 // @desc View All Matches
@@ -121,13 +125,16 @@ const getGugocup_MatchesPage = async (req, res) => {
 // @desc Get Match
 // @route GET /gugocup/match/:id
 const getGugocup_MatchPage = async (req, res) => {
-    const id = req.params.id
-    if (id && id.match(/^[0-9a-fA-F]{24}$/) && await Match.findById(id)) {
+    const id = req.params.id;
+    
+    if (id && id.match(/^[0-9a-fA-F]{24}$/)) {
         const match = await Match.findById(id).populate('team1').populate('team2');
-        renderTemplate(res, req, "match.ejs", { match });
-    } else {
-        res.redirect("/match")
+        if (match) {
+            return renderTemplate(res, req, "match.ejs", { match });
+        }
     }
+
+    res.redirect("/match");
 }
 
 // @desc View All Schedules
