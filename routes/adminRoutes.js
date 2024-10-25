@@ -21,7 +21,23 @@ router.route("/schedule/new")
 router.route("/schedule")
   .post(checkAdmin, createSchedule)
 
+// API
 // @desc Get Team's players
 router.get('/teams/:teamId/players', async (req, res) => res.json(await Player.find({ team: req.params.teamId })));
   
+router.get('/api/statistics', (req, res) => {
+  fs.readFile("../api.json", 'utf8', (err, data) => {
+    if (err) {
+        console.error('파일 읽기 중 오류 발생:', err);
+        return;
+    }
+
+    try {
+        const jsonData = JSON.parse(data);
+        res.json(jsonData)
+    } catch (parseError) {
+        console.error('JSON 파싱 중 오류 발생:', parseError);
+    }
+  });
+});
 module.exports = router

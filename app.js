@@ -72,22 +72,6 @@ app.use("/gugocup", require("./routes/gugocupRoutes"))
 app.get('/app/privacy', (req, res) => renderTemplate(res, req, "privacy.ejs"));
 app.get('/installApp', (req, res) => renderTemplate(res, req, "installApp.ejs"));
 
-app.get('/api/statistics', (req, res) => {
-  fs.readFile("../api.json", 'utf8', (err, data) => {
-    if (err) {
-        console.error('파일 읽기 중 오류 발생:', err);
-        return;
-    }
-
-    try {
-        const jsonData = JSON.parse(data);
-        res.json(jsonData)
-    } catch (parseError) {
-        console.error('JSON 파싱 중 오류 발생:', parseError);
-    }
-});
-});
-
 app.use((err, req, res, next) => {
   console.error(err);
   res.send(err);
