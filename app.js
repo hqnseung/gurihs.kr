@@ -12,6 +12,7 @@ const mongoose = require('mongoose');
 const passport = require('passport');
 const { OAuth2Strategy: GoogleStrategy } = require('passport-google-oauth');
 const statusMonitor = require('express-status-monitor');
+const morgan = require('morgan');
 
 const DATABASE_URL = process.env.DATABASE_URL
 const sessionSecret = process.env.sessionSecret
@@ -33,8 +34,11 @@ app.set("view engine", "html");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressSanitizer());
-app.use(statusMonitor());
 app.use(express.static(path.resolve(`${dataDir}${path.sep}assets`)));
+
+app.use(statusMonitor());
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'access.log'), { flags: 'a' });
+app.use(morgan('combined', { stream: accessLogStream }));
 
 app.use(session({
   secret: sessionSecret,
