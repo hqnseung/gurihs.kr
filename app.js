@@ -11,6 +11,7 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const passport = require('passport');
 const { OAuth2Strategy: GoogleStrategy } = require('passport-google-oauth');
+const statusMonitor = require('express-status-monitor');
 
 const DATABASE_URL = process.env.DATABASE_URL
 const sessionSecret = process.env.sessionSecret
@@ -32,6 +33,7 @@ app.set("view engine", "html");
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(expressSanitizer());
+app.use(statusMonitor());
 app.use(express.static(path.resolve(`${dataDir}${path.sep}assets`)));
 
 app.use(session({
@@ -69,6 +71,7 @@ app.use("/", require("./routes/loginRoutes"))
 app.use("/", require("./routes/adminRoutes"))
 app.use("/gugocup", require("./routes/gugocupRoutes"))
 
+app.get('/status', statusMonitor().pageRoute);
 app.get('/app/privacy', (req, res) => renderTemplate(res, req, "privacy.ejs"));
 app.get('/installApp', (req, res) => renderTemplate(res, req, "installApp.ejs"));
 
