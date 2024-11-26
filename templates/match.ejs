@@ -16,7 +16,7 @@
     
         <div class="card rounded-0" data-card-height="350" style="background-image: url('/gugocup/<%= match._id %>/01.jpg');">
             <div class="card-bottom m-3">
-                <span class="bg-highlight px-2 py-1 rounded-xs font-10 font-500">조별 경기</span>
+                <span class="bg-highlight px-2 py-1 rounded-xs font-10 font-500"><%= new Date(match.date) <= new Date('2024-11-24') ? '조별 경기' : '본선 경기' %></span>
                 <h1 class="color-white font-30 mt-1"><%= match.team1.grade %>학년 <%= match.team1.class %>반 vs <%= match.team2.grade %>학년 <%= match.team2.class %>반</h1>
                 <p class="color-white opacity-70 pt-3 mb-2 line-height-s">
                     경기 날짜 : 2024년 <%= new Date(match.date).toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' }) %><br>
