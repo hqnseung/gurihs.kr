@@ -141,7 +141,8 @@ const getGugocup_MatchPage = async (req, res) => {
 // @route GET /gugocup/schedule
 const getGugocup_SchedulesPage = async (req, res) => {
     const today = new Date();
-    const allSchedule = await Schedule.find({ date: { $gte: today } }) .populate('team1').populate('team2').sort({ date: +1 }).exec();
+    today.setHours(0, 0, 0, 0);
+    const allSchedule = await Schedule.find({ date: { $gte: today } }) .populate('team1').populate('team2').sort({ date: 1 }).exec();
     renderTemplate(res, req, "allSchedule.ejs", { allSchedule });
 }
 
