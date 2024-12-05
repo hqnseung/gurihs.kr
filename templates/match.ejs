@@ -27,7 +27,16 @@
         </div>
         <div class="card card-style">
             <div class="content align-self-center">
-                <h1><span style="font-size: medium; color: gray;">(<%= match.team1.grade %>학년 <%= match.team1.class %>반)</span> <%= match.score.team1 %> : <%= match.score.team2 %> <span style="font-size: medium; color: gray;">(<%= match.team2.grade %>학년 <%= match.team2.class %>반)</span></h1>
+                <h1>
+                    <span style="font-size: medium; color: gray;">
+                      (<%= match.team1.grade %>학년 <%= match.team1.class %>반)
+                    </span> 
+                    <%= match.score.team1.toString()[0] %> : <%= match.score.team2.toString()[0] %> 
+                    <span style="font-size: medium; color: gray;">
+                      (<%= match.team2.grade %>학년 <%= match.team2.class %>반)
+                    </span>
+                  </h1>
+                  
             </div>
         </div>
         <div class="card card-style">
