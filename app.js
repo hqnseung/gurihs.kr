@@ -87,19 +87,9 @@ app.use((err, req, res, next) => {
 app.use((req, res, next) => res.status(404).render(path.resolve(`${templateDir}${path.sep}404.ejs`)));
 
 const startServer = () => {
-  if (startType === "https") {
-    const options = {
-      key: fs.readFileSync("./config/private.key"),
-      cert: fs.readFileSync("./config/certificate.crt"),
-    };
-    https.createServer(options, app).listen(443, () => {
-      console.log(`HTTPS server started on port 443`);
-    });
-  } else if (startType === "http") {
-    app.listen(3000, () => {
-      console.log(`HTTP server started on port 3000`);
-    });
-  }
+  app.listen(8000, () => {
+    console.log('Express server running on port 8000');
+  });
 };
 
 require("./src/cron")
